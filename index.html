@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traventure - Your Journey Begins</title>
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .logo span {
+            color: var(--color-accent);
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--color-accent);
+            animation: loading 2s ease infinite;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes loading {
+            0% {
+                left: -100%;
+            }
+
+            50% {
+                left: 0;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="splash-content">
+        <div class="logo">Tra<span>venture</span></div>
+        <p class="text-muted" style="margin-bottom: 2rem;">Experiencing the world...</p>
+        <div class="loader-bar"></div>
+    </div>
+
+    <script src="js/auth-lib.js"></script>
+    <script>
+        // Simulate asset loading (auth is available globally)
+        setTimeout(() => {
+            const user = auth.getUser();
+            if (user) {
+                window.location.href = 'home.html';
+            } else {
+                window.location.href = 'login.html';
+            }
+        }, 1500);
+    </script>
+</body>
+
+</html>

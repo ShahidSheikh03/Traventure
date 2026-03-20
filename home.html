@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traventure - Your Journey, Every Way</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image: url('https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=2069&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            animation: panImage 30s linear infinite alternate;
+        }
+
+        @keyframes panImage {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+        .tab-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 900px) {
+            .tab-grid {
+                grid-template-columns: repeat(4, 1fr);
+                align-items: end;
+            }
+
+            .tab-grid-city {
+                grid-template-columns: 2fr 2fr 1.5fr auto;
+            }
+        }
+
+        .offers-scroll-container {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 2rem;
+            /* Hide scrollbar */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .offers-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .hero-card-grid {
+                grid-template-columns: 1fr !important;
+                padding: 2rem !important;
+                gap: 2rem !important;
+            }
+
+            .hero-pills-grid {
+                height: 300px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Shared Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script src="js/translations.js"></script>
+    <script src="js/navbar.js"></script>
+
+    <!-- 2. Hero Section (Engine Style Redesign) -->
+    <section
+        style="position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 1rem 4rem 1rem; overflow: hidden;">
+        <!-- Background Blur/Gradient -->
+        <div style="position: absolute; inset: 0; z-index: -1;">
+            <!-- Fresh/Calming Overlay -->
+            <div
+                style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.4));">
+            </div>
+            <!-- Fresh Nature Image -->
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop"
+                style="width: 100%; height: 100%; object-fit: cover; filter: blur(4px);">
+        </div>
+
+        <!-- Floating Hero Card -->
+        <div class="fade-in-up hero-card-grid" style="
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            align-items: center;
+        ">
+            <!-- Left Side: AI Search -->
+            <div style="color: #0f172a;">
+                <h1
+                    style="font-size: 3rem; letter-spacing: -1px; line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800;">
+                    <span data-i18n="hero.title">Travel Intelligently.</span>
+                </h1>
+
+                <p class="text-xl text-muted" style="margin-bottom: 2.5rem; max-width: 90%;" data-i18n="hero.subtitle">
+                    Tell us your dream destination, style, or vibe. Our AI will craft the perfect itinerary for you in
+                    seconds.
+                </p>
+
+                <div
+                    style="background: white; padding: 0.5rem; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center;">
+                    <div style="padding: 0 1.5rem; color: var(--color-accent);">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                    </div>
+                    <input type="text" id="homeSearchInput"
+                        placeholder="Try &quot;Honeymoon in Kerala&quot; or &quot;Adventure in Manali&quot;..."
+                        data-i18n="search.dest"
+                        style="flex: 1; border: none; outline: none; padding: 1rem 0; font-size: 1.1rem; color: #0f172a;">
+                    <button class="btn btn-primary" onclick="searchAI()"
+                        style="border-radius: 50px; padding: 0.8rem 2rem;" data-i18n="hero.cta">
+                        Plan It
+                    </button>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <small class="text-muted">Trending:</small>
+                    <span class="badge" onclick="quickSearch('Goa Party Trip')"
+                        style="cursor: pointer; background: rgba(0,0,0,0.05); color: #0f172a;">Goa Party</span>
+                    <span class="badge" onclick="quickSearch('Spiritual Varanasi')"
+                        style="cursor: pointer; background: rgba(0,0,0,0.05); color: #0f172a;">Varanasi</span>
+                    <span class="badge" onclick="quickSearch('Kerala Backwaters')"
+                        style="cursor: pointer; background: rgba(0,0,0,0.05); color: #0f172a;">Kerala</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Image Pills -->
+            <div class="hero-pills-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; height: 500px;">
+                <!-- Pill 1 -->
+                <div style="border-radius: 100px; overflow: hidden; position: relative; height: 100%;">
+                    <img src="https://images.unsplash.com/photo-1555217851-6141535bd771?q=80&w=1887&auto=format&fit=crop"
+                        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                    <div
+                        style="position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center; color: white; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                        Dining</div>
+                </div>
+                <!-- Pill 2 (Main) -->
+                <div
+                    style="border-radius: 100px; overflow: hidden; position: relative; height: 100%; margin-top: -2rem; margin-bottom: 2rem;">
+                    <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
+                        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                    <div
+                        style="position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center; color: white; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                        Wanderlust</div>
+                </div>
+                <!-- Pill 3 -->
+                <div style="border-radius: 100px; overflow: hidden; position: relative; height: 100%;">
+                    <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop"
+                        style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                    <div
+                        style="position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center; color: white; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                        Adventure</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Why Choose Traventure -->
+    <section class="section-padding" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="grid-cols-4">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon-box"><i class="fa-solid fa-layer-group"></i></div>
+                    <div>
+                        <h4 class="font-bold" data-i18n="features.title">All-in-One</h4>
+                        <div class="text-xs text-muted" data-i18n="features.ai.desc">Flights, Trains, Cabs & more</div>
+                    </div>
+                </div>
+                <div class="feature-card fade-in-up" style="transition-delay: 0.1s;">
+                    <div class="feature-icon-box"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <div>
+                        <h4 class="font-bold" data-i18n="features.best">Best Price</h4>
+                        <div class="text-xs text-muted" data-i18n="features.best.desc">Guaranteed lowest fares</div>
+                    </div>
+                </div>
+                <div class="feature-card fade-in-up" style="transition-delay: 0.2s;">
+                    <div class="feature-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <h4 class="font-bold" data-i18n="features.ai">Fast Booking</h4>
+                        <div class="text-xs text-muted">Instant confirmation</div>
+                    </div>
+                </div>
+                <div class="feature-card fade-in-up" style="transition-delay: 0.3s;">
+                    <div class="feature-icon-box"><i class="fa-solid fa-headset"></i></div>
+                    <div>
+                        <h4 class="font-bold" data-i18n="features.support">24/7 Support</h4>
+                        <div class="text-xs text-muted" data-i18n="features.support.desc">We're always here</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Travel Packages -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="flex-between" style="margin-bottom: 2rem;">
+                <h2 class="text-2xl font-bold fade-in-up">Featured Packages</h2>
+                <a href="packages.html" class="btn btn-outline fade-in-up">View All Packages</a>
+            </div>
+
+            <div class="grid-cols-3" id="featuredPackagesContainer">
+                <!-- Packages will be injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. In-City Services Preview -->
+    <section class="section-padding" style="background: linear-gradient(to right, #0f172a, #1e293b);">
+        <div class="container">
+            <div class="grid-cols-2" style="align-items: center;">
+                <div class="fade-in-up">
+                    <span class="badge"
+                        style="background: var(--color-accent); color: white; margin-bottom: 1rem; padding: 4px 8px; border-radius:4px; font-weight:bold; font-size:0.8rem;">City
+                        Mobility</span>
+                    <h2 class="text-3xl font-bold" style="margin-bottom: 1rem;">Move Around the City</h2>
+                    <p class="text-muted" style="margin-bottom: 2rem;">Why wait? Book instant Cabs and Bike rides for
+                        your daily commute or sightseeing. Safe, fast, and affordable.</p>
+
+                    <div class="flex-col" style="gap: 1rem;">
+                        <div class="ride-type-card">
+                            <i class="fa-solid fa-car text-2xl text-accent"></i>
+                            <div>
+                                <h4 class="font-bold">Comfort Cabs</h4>
+                                <p class="text-sm text-muted">AC sedans at pocket-friendly rates.</p>
+                            </div>
+                        </div>
+                        <div class="ride-type-card">
+                            <i class="fa-solid fa-motorcycle text-2xl text-accent"></i>
+                            <div>
+                                <h4 class="font-bold">Express Bikes</h4>
+                                <p class="text-sm text-muted">Beat the traffic for half the price.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="incity-travel.html" class="btn btn-primary"
+                        style="margin-top: 2rem; display:inline-block;">
+                        Book a Ride Now
+                    </a>
+                </div>
+
+                <div class="fade-in-up text-center" style="margin-top: 2rem;">
+                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/taxi-service-illustration-download-in-svg-png-gif-file-formats--online-booking-app-mobile-smartphone-transportation-pack-vehicle-illustrations-3694038.png"
+                        style="max-width: 80%; opacity: 0.9;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Intercity Options Preview -->
+    <section class="section-padding">
+        <div class="container">
+            <h2 class="text-center font-bold text-3xl fade-in-up" style="margin-bottom: 3rem;">Intercity Travel</h2>
+            <div class="grid-cols-3">
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem;">
+                    <i class="fa-solid fa-bus text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Bus Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Sleeper, Semi-sleeper, AC, and Volvo buses.
+                    </p>
+                    <a href="transport.html" class="btn btn-outline">Search Buses</a>
+                </div>
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem; transition-delay: 0.1s;">
+                    <i class="fa-solid fa-train text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Train Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Check PNR, seat availability, and book IRCTC
+                        trains.</p>
+                    <a href="transport.html" class="btn btn-outline">Search Trains</a>
+                </div>
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem; transition-delay: 0.2s;">
+                    <i class="fa-solid fa-plane text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Flight Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Domestic and International flights at best
+                        rates.</p>
+                    <a href="transport.html" class="btn btn-outline">Search Flights</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Offers & Deals -->
+    <section id="offers" class="section-padding" style="overflow: hidden;">
+        <div class="container">
+            <h2 class="font-bold text-3xl fade-in-up" style="margin-bottom: 2rem;">Exclusive Offers</h2>
+            <div class="offers-scroll-container fade-in-up">
+
+                <div class="offer-card">
+                    <h4 class="text-xl font-bold text-accent">FLAT 20% OFF</h4>
+                    <p class="text-sm text-muted">On your first flight booking</p>
+                    <div
+                        style="margin-top: 1rem; border: 1px dashed rgba(255,255,255,0.3); padding: 0.5rem; text-align: center; font-family: monospace;">
+                        FLY20</div>
+                </div>
+
+                <div class="offer-card">
+                    <h4 class="text-xl font-bold text-accent">FREE CAB RIDE</h4>
+                    <p class="text-sm text-muted">Get 100% cashback on 1st ride</p>
+                    <div
+                        style="margin-top: 1rem; border: 1px dashed rgba(255,255,255,0.3); padding: 0.5rem; text-align: center; font-family: monospace;">
+                        RIDER100</div>
+                </div>
+
+                <div class="offer-card">
+                    <h4 class="text-xl font-bold text-accent">SUMMER SALE</h4>
+                    <p class="text-sm text-muted">Up to ₹5000 off on Packages</p>
+                    <div
+                        style="margin-top: 1rem; border: 1px dashed rgba(255,255,255,0.3); padding: 0.5rem; text-align: center; font-family: monospace;">
+                        SUMMER5K</div>
+                </div>
+
+                <div class="offer-card">
+                    <h4 class="text-xl font-bold text-accent">BUS SAVINGS</h4>
+                    <p class="text-sm text-muted">Flat ₹150 off on Volvo</p>
+                    <div
+                        style="margin-top: 1rem; border: 1px dashed rgba(255,255,255,0.3); padding: 0.5rem; text-align: center; font-family: monospace;">
+                        VOLVO150</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. App Promotion -->
+    <section class="section-padding" style="background: var(--color-primary-light);">
+        <div class="container grid-cols-2" style="align-items: center;">
+            <div class="fade-in-up">
+                <h2 class="text-3xl font-bold" style="margin-bottom: 1rem;">Book Anytime, Anywhere</h2>
+                <p class="text-muted text-lg" style="margin-bottom: 2rem;">Download the Traventure app for exclusive
+                    mobile-only deals, real-time tracking, and faster checkout.</p>
+                <div class="flex-center" style="justify-content: flex-start; gap: 1rem;">
+                    <button class="btn btn-outline" style="border-radius: 8px; padding: 0.5rem 1rem;">
+                        <i class="fa-brands fa-apple text-2xl"></i> App Store
+                    </button>
+                    <button class="btn btn-outline" style="border-radius: 8px; padding: 0.5rem 1rem;">
+                        <i class="fa-brands fa-google-play text-2xl"></i> Google Play
+                    </button>
+                </div>
+            </div>
+            <div class="fade-in-up text-center" style="margin-top: 2rem;">
+                <img src="https://i.pinimg.com/originals/e8/34/2f/e8342f280a99723cf758f50435b676f4.png"
+                    style="width: 200px; transform: rotate(-10deg); filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));">
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. Footer -->
+    <footer style="background: #020617; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div class="grid-cols-4">
+                <div>
+                    <a href="#" class="logo text-2xl font-bold text-white">Tra<span
+                            class="text-accent">venture</span></a>
+                    <p class="text-sm text-muted" style="margin-top: 1rem;">Your trusted partner for exploring the
+                        world, one journey at a time.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <i class="fa-brands fa-facebook text-muted" style="cursor: pointer;"></i>
+                        <i class="fa-brands fa-twitter text-muted" style="cursor: pointer;"></i>
+                        <i class="fa-brands fa-instagram text-accent" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg" style="margin-bottom: 1rem;">Services</h4>
+                    <a href="#" class="footer-link">Flights</a>
+                    <a href="#" class="footer-link">Train Tickets</a>
+                    <a href="#" class="footer-link">Bus Booking</a>
+                    <a href="#" class="footer-link">City Cabs</a>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg" style="margin-bottom: 1rem;">Support</h4>
+                    <a href="#" class="footer-link">Help Center</a>
+                    <a href="#" class="footer-link">Contact Us</a>
+                    <a href="#" class="footer-link">Fare Rules</a>
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg" style="margin-bottom: 1rem;">Contact</h4>
+                    <p class="footer-link"><i class="fa-solid fa-envelope"></i> help@traventure.com</p>
+                    <p class="footer-link"><i class="fa-solid fa-phone"></i> +91 98765 43210</p>
+                    <p class="footer-link"><i class="fa-solid fa-location-dot"></i> Bengaluru, India</p>
+                </div>
+            </div>
+            <div class="text-center text-sm text-muted"
+                style="border-top: 1px solid rgba(255,255,255,0.05); margin-top: 3rem; padding-top: 1.5rem;">
+                © 2026 Traventure. All rights reserved. Made with <i class="fa-solid fa-heart text-accent"></i> in
+                India.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script: Non-Module to Fix Standard Loading -->
+    <script>
+        // 1. Featured Packages Data (Inlined to avoid module issues)
+        const featuredPackages = [
+            {
+                id: 'rajasthan-royal',
+                name: 'Royal Jaipur & Udaipur',
+                location: 'Rajasthan',
+                duration: '5D / 4N',
+                price: 18999,
+                image: 'https://images.unsplash.com/photo-1595928607628-7711d9a6331a?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                id: 'goa-beach',
+                name: 'Sunny Goa Vibes',
+                location: 'Goa',
+                duration: '4D / 3N',
+                price: 12499,
+                image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                id: 'kerala-backwaters',
+                name: 'Munnar & Alleppey',
+                location: 'Kerala',
+                duration: '6D / 5N',
+                price: 22500,
+                image: 'https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=2000&auto=format&fit=crop'
+            }
+        ];
+
+        // Render Featured Packages
+        const featuredContainer = document.getElementById('featuredPackagesContainer');
+        if (featuredContainer) {
+            featuredContainer.innerHTML = featuredPackages.map((pkg, index) => `
+                <div class="glass-panel fade-in-up" style="overflow: hidden; transition-delay: ${index * 0.1}s;">
+                    <img src="${pkg.image}" style="width:100%; height:200px; object-fit:cover;">
+                    <div style="padding: 1.5rem;">
+                        <h3 class="text-xl font-bold">${pkg.name}</h3>
+                        <div class="text-sm text-muted" style="margin: 0.5rem 0 1rem;">${pkg.duration} • ${pkg.location}</div>
+                        <div class="flex-between">
+                            <div class="text-accent font-bold text-lg">₹${pkg.price.toLocaleString()}</div>
+                            <a href="package-details.html?id=${pkg.id}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // NOTE: Auth Logic is now handled centrally by js/navbar.js
+
+        // Tab Switching Logic
+        window.switchTab = function (tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            if (['flights', 'trains', 'buses'].includes(tabName)) {
+
+                // document.getElementById('tab-generic').classList.add('active');
+                // document.getElementById('genericSearchType').textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            } else {
+                const tab = document.getElementById('tab-' + tabName);
+                if (tab) tab.classList.add('active');
+            }
+
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(tabName) ||
+                    (tabName === 'incity' && btn.textContent.toLowerCase().includes('in-city'))) {
+                    btn.classList.add('active');
+                }
+            });
+        };
+
+        // In-City Ride Selector
+        window.selectRideType = function (el, type) {
+            document.querySelectorAll('.ride-type-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // Scroll Logic (Navbar & Animations)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+        // Wait for Navbar to be injected
+        const waitForNavbar = setInterval(() => {
+            const navbar = document.getElementById('navbar');
+            if (navbar) {
+                clearInterval(waitForNavbar);
+
+                // Attach Scroll Listener
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                        navbar.style.backdropFilter = 'blur(10px)';
+                        navbar.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
+                    } else {
+                        navbar.classList.remove('scrolled');
+                        navbar.style.background = 'transparent';
+                        navbar.style.backdropFilter = 'none';
+                        navbar.style.boxShadow = 'none';
+                    }
+                });
+            }
+        }, 100);
+
+        // Search Handler (AI Redirect)
+        window.searchAI = function () {
+            const input = document.getElementById('homeSearchInput').value;
+            if (input) {
+                window.location.href = `planner.html?prompt=${encodeURIComponent(input)}`;
+            }
+        }
+
+        window.quickSearch = function (term) {
+            window.location.href = `planner.html?prompt=${encodeURIComponent(term)}`;
+        }
+
+        document.getElementById('homeSearchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') searchAI();
+        });
+
+        // Global Toast
+        window.showToast = function (msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = 'var(--color-accent)';
+            toast.style.color = 'white';
+            toast.style.padding = '1rem 2rem';
+            toast.style.borderRadius = '50px';
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+            toast.style.zIndex = '1000';
+            toast.style.fontWeight = 'bold';
+            toast.style.animation = 'floatUp 0.5s ease forwards';
+            toast.innerHTML = `<i class="fa-regular fa-circle-check"></i> ${msg}`;
+
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes floatUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }`;
+        document.head.appendChild(style);
+
+        document.querySelectorAll('.offer-card').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                const code = card.querySelector('div[style*="border"]').innerText.trim();
+                navigator.clipboard.writeText(code);
+                showToast(`Coupon ${code} copied!`);
+            });
+        });
+    </script>
+</body>
+
+</html>

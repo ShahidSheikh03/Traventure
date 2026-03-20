@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Dark overlay */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), var(--bg-body));
+            z-index: -1;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .logo span {
+            color: var(--color-accent);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .social-login {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+    <div class="auth-container">
+        <div class="glass-panel auth-card fade-in">
+            <a href="#" class="logo">Tra<span>venture</span></a>
+            <h2 style="margin-bottom: 0.5rem;">Welcome Back</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Login to start your journey</p>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="email" id="email" class="input-field" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" class="input-field" placeholder="Password" required>
+                </div>
+
+                <p id="errorMsg" class="error-message">Invalid credentials</p>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Sign In <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i>
+                </button>
+            </form>
+
+            <div class="social-login">
+                <button class="btn btn-outline social-btn">
+                    <i class="fa-brands fa-google"></i> Continue with Google
+                </button>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    Don't have an account? <a href="signup.html"
+                        style="color: var(--color-accent); font-weight: 600;">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-lib.js"></script>
+    <script>
+        // Redirect if already logged in
+        // Waited for script to load, but since it's sync script tag, window.auth is available
+        auth.redirectIfLoggedIn();
+
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = loginForm.querySelector('button[type="submit"]');
+        const errorMsg = document.getElementById('errorMsg');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Loading state
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Signing In...';
+            loginBtn.disabled = true;
+            errorMsg.style.display = 'none';
+
+            try {
+                await auth.login(email, password);
+                window.location.href = 'home.html';
+            } catch (err) {
+                errorMsg.textContent = err || 'Login failed';
+                errorMsg.style.display = 'block';
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

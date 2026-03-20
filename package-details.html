@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Details - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/payment.css">
+    <link rel="stylesheet" href="css/booking.css">
+    <style>
+        body {
+            padding-top: 120px;
+            /* Increased space for fixed navbar */
+        }
+
+        .details-hero {
+            height: 60vh;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .details-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), #020617);
+        }
+
+        .details-content {
+            position: relative;
+            z-index: 10;
+            margin-top: -50px;
+            /* Reduced to avoid navbar overlap */
+        }
+
+        .details-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header (Consistent) -->
+    <nav class="navbar" id="navbar">
+        <div class="container flex-between">
+            <div class="flex-center" style="gap: 2rem;">
+                <a href="home.html" class="logo" style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">
+                    Tra<span class="text-accent">venture</span>
+                </a>
+                <div class="nav-links">
+                    <a href="home.html" class="nav-link">Home</a>
+                    <a href="packages.html" class="nav-link">Packages</a>
+                    <a href="transport.html" class="nav-link">Transport</a>
+                    <a href="incity-travel.html" class="nav-link">In-City Travel</a>
+                    <a href="home.html#offers" class="nav-link">Offers</a>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <div class="lang-selector">
+                    <i class="fa-solid fa-globe"></i> <span>EN</span>
+                </div>
+                <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.15);"></div>
+                <div class="user-menu" id="userMenuContainer">
+                    <div class="avatar-trigger" onclick="toggleUserDrawer()">
+                        <div class="avatar-container">
+                            <span id="userInitial">U</span>
+                            <img id="userAvatarImg" src="" class="avatar-img" style="display:none;">
+                        </div>
+                        <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+                    </div>
+                </div>
+            </div>
+
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Content Injected via JS -->
+    <div id="packageContent" style="min-height: 50vh; display: flex; align-items: center; justify-content: center;">
+        <div class="text-center">
+            <h2 class="text-xl">Loading Package Details...</h2>
+            <p class="text-muted text-sm">If nothing appears, please ensure you are running this project on a Local
+                Server.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer
+        style="background: #020617; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 3rem;">
+        <div class="container">
+            <div class="text-center text-sm text-muted">
+                © 2026 Traventure. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Copying Drawer Code from Home for Consistency -->
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleUserDrawer()"></div>
+    <div class="profile-drawer" id="profileDrawer">
+        <!-- Header -->
+        <div class="drawer-header">
+            <div class="drawer-user-info">
+                <span class="drawer-name" id="drawerName">User Name</span>
+                <span class="drawer-email" id="drawerEmail">email@example.com</span>
+            </div>
+            <button class="close-btn" onclick="toggleUserDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Actions -->
+        <div class="drawer-content">
+            <a href="profile.html" class="drawer-item"><i class="fa-regular fa-user"></i> My Profile</a>
+            <a href="#" class="drawer-item"><i class="fa-solid fa-suitcase-rolling"></i> My Bookings</a>
+            <div class="drawer-item item-logout" onclick="handleLogout()" style="margin-top:2rem; cursor:pointer;">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </div>
+        </div>
+    </div>
+
+    <!-- Customization Modal -->
+    <div class="customization-modal" id="customizationModal">
+        <div class="customization-content">
+            <div class="customization-header">
+                <h2>Customize Your Trip</h2>
+                <button class="close-modal-btn" onclick="closeCustomizationModal()"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Accommodation Type -->
+            <div class="customization-section">
+                <div class="section-title"><i class="fa-solid fa-hotel"></i> Accommodation Type</div>
+                <div class="option-grid">
+                    <div class="option-card selected" data-type="accommodation" data-value="standard"
+                        onclick="selectOption(this, 'accommodation', 'standard', 0)">
+                        <div class="option-name">Standard</div>
+                        <div class="option-desc">Clean, comfortable 3-star hotels</div>
+                        <div class="option-price">Included</div>
+                    </div>
+                    <div class="option-card" data-type="accommodation" data-value="deluxe"
+                        onclick="selectOption(this, 'accommodation', 'deluxe', 3000)">
+                        <div class="option-name">Deluxe</div>
+                        <div class="option-desc">Premium 4-star hotels</div>
+                        <div class="option-price">+ ₹3,000</div>
+                    </div>
+                    <div class="option-card" data-type="accommodation" data-value="luxury"
+                        onclick="selectOption(this, 'accommodation', 'luxury', 7000)">
+                        <div class="option-name">Luxury</div>
+                        <div class="option-desc">5-star hotels & resorts</div>
+                        <div class="option-price">+ ₹7,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meal Plan -->
+            <div class="customization-section">
+                <div class="section-title"><i class="fa-solid fa-utensils"></i> Meal Plan</div>
+                <div class="option-grid">
+                    <div class="option-card selected" data-type="mealPlan" data-value="breakfast"
+                        onclick="selectOption(this, 'mealPlan', 'breakfast', 0)">
+                        <div class="option-name">Breakfast Only</div>
+                        <div class="option-desc">Daily breakfast included</div>
+                        <div class="option-price">Included</div>
+                    </div>
+                    <div class="option-card" data-type="mealPlan" data-value="half-board"
+                        onclick="selectOption(this, 'mealPlan', 'half-board', 1500)">
+                        <div class="option-name">Half Board</div>
+                        <div class="option-desc">Breakfast + Dinner</div>
+                        <div class="option-price">+ ₹1,500</div>
+                    </div>
+                    <div class="option-card" data-type="mealPlan" data-value="full-board"
+                        onclick="selectOption(this, 'mealPlan', 'full-board', 2500)">
+                        <div class="option-name">Full Board</div>
+                        <div class="option-desc">All meals included</div>
+                        <div class="option-price">+ ₹2,500</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transport Upgrade -->
+            <div class="customization-section">
+                <div class="section-title"><i class="fa-solid fa-car"></i> Transport</div>
+                <div class="option-grid">
+                    <div class="option-card selected" data-type="transport" data-value="standard"
+                        onclick="selectOption(this, 'transport', 'standard', 0)">
+                        <div class="option-name">Standard Cab</div>
+                        <div class="option-desc">AC Sedan/Hatchback</div>
+                        <div class="option-price">Included</div>
+                    </div>
+                    <div class="option-card" data-type="transport" data-value="suv"
+                        onclick="selectOption(this, 'transport', 'suv', 2000)">
+                        <div class="option-name">Premium SUV</div>
+                        <div class="option-desc">Innova/Ertiga</div>
+                        <div class="option-price">+ ₹2,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add-ons -->
+            <div class="customization-section">
+                <div class="section-title"><i class="fa-solid fa-star"></i> Enhance Your Experience</div>
+                <div class="addon-item">
+                    <input type="checkbox" class="addon-checkbox" id="addon-guide"
+                        onchange="toggleAddon('guide', 1500, this.checked)">
+                    <div class="addon-details">
+                        <div class="addon-name">Local Guide</div>
+                        <div class="addon-desc">Professional tour guide for all sightseeing</div>
+                    </div>
+                    <div class="addon-price">+ ₹1,500</div>
+                </div>
+                <div class="addon-item">
+                    <input type="checkbox" class="addon-checkbox" id="addon-insurance"
+                        onchange="toggleAddon('insurance', 500, this.checked)">
+                    <div class="addon-details">
+                        <div class="addon-name">Travel Insurance</div>
+                        <div class="addon-desc">Full coverage for trip cancellation & medical</div>
+                    </div>
+                    <div class="addon-price">+ ₹500</div>
+                </div>
+                <div class="addon-item">
+                    <input type="checkbox" class="addon-checkbox" id="addon-camera"
+                        onchange="toggleAddon('camera', 2000, this.checked)">
+                    <div class="addon-details">
+                        <div class="addon-name">Professional Photography</div>
+                        <div class="addon-desc">Full-day photographer with edited photos</div>
+                    </div>
+                    <div class="addon-price">+ ₹2,000</div>
+                </div>
+            </div>
+
+            <!-- Special Requests -->
+            <div class="customization-section">
+                <div class="section-title"><i class="fa-solid fa-message"></i> Special Requests</div>
+                <textarea class="special-requests-textarea" id="specialRequests"
+                    placeholder="Any special requests? (e.g., dietary preferences, room preferences, accessibility needs)"></textarea>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="customization-footer">
+                <button class="btn btn-outline" onclick="closeCustomizationModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="proceedToPayment()">Proceed to Payment <span
+                        id="modalGrandTotal" style="font-weight: 700;"></span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Logger -->
+    <div id="debugLog"
+        style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: lime; padding: 10px; font-family: monospace; font-size: 12px; z-index: 9999; max-height: 100px; overflow: auto; display: none;">
+    </div>
+    <script src="js/translations.js"></script>
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            const log = document.getElementById('debugLog');
+            log.style.display = 'block';
+            log.innerHTML += `<div>Error: ${msg} (Line: ${line})</div>`;
+            return false;
+        };
+        console.log = (function (oldLog) {
+            return function (...args) {
+                oldLog.apply(console, args);
+                // const log = document.getElementById('debugLog');
+                // log.innerHTML += `<div>Log: ${args.join(' ')}</div>`;
+            }
+        })(console.log);
+    </script>
+    <script>
+        // --- 1. INLINED DEPENDENCIES (To work without Local Server) ---
+
+        // AUTH MODULE
+        const STORAGE_KEY = 'traventure_user';
+        const auth = {
+            getUser: () => {
+                const user = localStorage.getItem(STORAGE_KEY);
+                return user ? JSON.parse(user) : null;
+            },
+            logout: () => {
+                localStorage.removeItem(STORAGE_KEY);
+                window.location.href = 'login.html';
+            },
+            requireAuth: () => {
+                const user = localStorage.getItem(STORAGE_KEY);
+                if (!user) window.location.href = 'login.html';
+            }
+        };
+
+        // PACKAGES DATA
+        const packages = [
+            {
+                id: 'rajasthan-royal',
+                name: 'Royal Jaipur & Udaipur',
+                location: 'Rajasthan',
+                duration: '5D / 4N',
+                price: 18999,
+                image: 'https://images.unsplash.com/photo-1595928607628-7711d9a6331a?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Best Seller',
+                highlights: ['4-Star Heritage Stay', 'Private AC Cab Transfers', 'Palace Tours & Guide'],
+                description: 'Experience the grandeur of the Pink City and the City of Lakes. Stay in heritage hotels and enjoy private guided tours of the magnificent palaces and forts.'
+            },
+            {
+                id: 'goa-beach',
+                name: 'Sunny Goa Vibes',
+                location: 'Goa',
+                duration: '4D / 3N',
+                price: 12499,
+                image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Trending',
+                highlights: ['Beach Resort Stay with Breakfast', 'North to South Sightseeing', 'Cruise Dinner Included'],
+                description: 'Relax on the sun-kissed beaches of Goa. This package covers both North and South Goa, including water sports activities and a sunset cruise.'
+            },
+            {
+                id: 'kerala-backwaters',
+                name: 'Munnar & Alleppey',
+                location: 'Kerala',
+                duration: '6D / 5N',
+                price: 22500,
+                image: 'https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=2000&auto=format&fit=crop',
+                tag: '',
+                highlights: ['Houseboat Stay (All Meals)', 'Tea Garden Visit', 'Cochin Airport Pickup'],
+                description: 'Immerse yourself in God\'s Own Country. Float through the backwaters of Alleppey in a traditional houseboat and breathe in the fresh air of Munnar tea gardens.'
+            },
+            {
+                id: 'manali-adventure',
+                name: 'Manali Adventure',
+                location: 'Himachal',
+                duration: '7D / 6N',
+                price: 15999,
+                image: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000&auto=format&fit=crop',
+                tag: '',
+                highlights: ['Solang Valley Paragliding', 'Rohtang Pass Tour', 'Bonfire & Music Night'],
+                description: 'Calling all adventure lovers! Paraglide over Solang Valley, play in the snow at Rohtang Pass, and enjoy cozy bonfire nights in Manali.'
+            },
+            {
+                id: 'agra-taj',
+                name: 'Taj Mahal Express',
+                location: 'Agra',
+                duration: '2D / 1N',
+                price: 4999,
+                image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1000&auto=format&fit=crop',
+                tag: '',
+                highlights: ['Taj Mahal Sunrise Tour', 'Agra Fort Visit', 'Luxury AC Bus from Delhi'],
+                description: 'A quick getaway to witness the monument of love. Perfect for a weekend trip from Delhi, including comfortable travel and guided tours.'
+            },
+            {
+                id: 'andaman-bliss',
+                name: 'Andaman Island Bliss',
+                location: 'Andaman',
+                duration: '6D / 5N',
+                price: 32500,
+                image: 'https://images.unsplash.com/photo-1518182170-4380816043cd?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Honeymoon',
+                highlights: ['Havelock Island Ferry', 'Scuba Diving Session', 'Candlelight Dinner'],
+                description: 'The ultimate romantic getaway. Pristine white sands, crystal clear waters, and luxury stays make this the perfect honeymoon package.'
+            }
+        ];
+    </script>
+
+    <!-- Shared Payment Logic -->
+    <script src="js/payment.js"></script>
+
+    <script>
+        // --- MAIN LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Get ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const packageId = urlParams.get('id');
+
+            // 2. Find Package
+            const pkg = packages.find(p => p.id === packageId);
+            const container = document.getElementById('packageContent');
+
+            if (!pkg) {
+                container.innerHTML = `
+                    <div class="container text-center" style="padding: 5rem 0;">
+                        <h2 class="text-2xl font-bold">Package Not Found</h2>
+                        <a href="packages.html" class="btn btn-primary">Browse All Packages</a>
+                    </div>`;
+            } else {
+                document.title = `${pkg.name} - Traventure Packages`;
+
+                // Render Package Details
+                container.innerHTML = `
+            <section class="details-hero" style="background-image: url('${pkg.image}');">
+                <div class="container" style="height: 100%; display: flex; align-items: flex-end; padding-bottom: 8rem; position: relative; z-index: 1;">
+                    <div class="fade-in-up">
+                        <span class="badge" style="background: var(--color-accent); color: white; margin-bottom: 1rem; padding: 4px 8px; border-radius:4px; font-weight:bold;">${pkg.duration}</span>
+                        <h1 class="text-4xl font-bold" style="margin-bottom: 0.5rem; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">${pkg.name}</h1>
+                        <p class="text-xl" style="opacity: 0.9;"><i class="fa-solid fa-location-dot"></i> ${pkg.location}</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="container details-content">
+                <div class="grid-cols-3" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <div class="details-card fade-in-up">
+                        <h2 class="text-2xl font-bold" style="margin-bottom: 1rem;" data-i18n="lbl.overview">Overview</h2>
+                        <p class="text-muted" style="line-height: 1.6; margin-bottom: 2rem;">${pkg.description}</p>
+                        <h3 class="text-xl font-bold" style="margin-bottom: 1rem;">Highlights</h3>
+                        <div class="grid-cols-2">
+                            ${pkg.highlights.map(h => `<div class="highlight-item"><i class="fa-solid fa-check text-accent"></i><span>${h}</span></div>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="fade-in-up" style="transition-delay: 0.1s;">
+                        <div class="details-card" style="position: sticky; top: 100px;">
+                            <div class="text-muted text-sm">Starting from</div>
+                            <div class="text-accent font-bold text-3xl" style="margin-bottom: 1.5rem;">₹${pkg.price.toLocaleString()}<span style="font-size: 0.9rem; font-weight: normal;"> / person</span></div>
+                            
+                            <!-- Traveler Selector -->
+                            <div class="traveler-selector" id="travelerSelector">
+                                <div class="traveler-row">
+                                    <div class="traveler-info">
+                                        <div class="traveler-label">Adults</div>
+                                        <div class="traveler-desc">18+ years</div>
+                                    </div>
+                                    <div class="traveler-counter">
+                                        <button class="counter-btn" onclick="updateTravelers('adults', -1)">−</button>
+                                        <span class="counter-value" id="adults-count">2</span>
+                                        <button class="counter-btn" onclick="updateTravelers('adults', 1)">+</button>
+                                    </div>
+                                </div>
+                                <div class="traveler-row">
+                                    <div class="traveler-info">
+                                        <div class="traveler-label">Children</div>
+                                        <div class="traveler-desc">2-17 years</div>
+                                    </div>
+                                    <div class="traveler-counter">
+                                        <button class="counter-btn" onclick="updateTravelers('children', -1)">−</button>
+                                        <span class="counter-value" id="children-count">0</span>
+                                        <button class="counter-btn" onclick="updateTravelers('children', 1)">+</button>
+                                    </div>
+                                </div>
+                                <div id="childrenAgesContainer" class="children-ages" style="display: none;"></div>
+                                <div class="traveler-row">
+                                    <div class="traveler-info">
+                                        <div class="traveler-label">Infants</div>
+                                        <div class="traveler-desc">0-2 years</div>
+                                    </div>
+                                    <div class="traveler-counter">
+                                        <button class="counter-btn" onclick="updateTravelers('infants', -1)">−</button>
+                                        <span class="counter-value" id="infants-count">0</span>
+                                        <button class="counter-btn" onclick="updateTravelers('infants', 1)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Date Picker -->
+                            <div class="date-input-group">
+                                <div class="date-input-row">
+                                    <div class="date-field">
+                                        <label class="date-label">Check-in</label>
+                                        <input type="date" class="date-input" id="checkInDate" onchange="calculateBooking()">
+                                    </div>
+                                    <div class="date-field">
+                                        <label class="date-label">Check-out</label>
+                                        <input type="date" class="date-input" id="checkOutDate" onchange="calculateBooking()">
+                                    </div>
+                                </div>
+                                <div class="nights-display" id="nightsDisplay">Select dates</div>
+                            </div>
+
+                            <!-- Price Breakdown -->
+                            <div class="price-breakdown">
+                                <div class="price-row">
+                                    <span class="price-label">Base price × <span id="adultsBreakdown">2</span> adults</span>
+                                    <span class="price-value" id="adultsPrice">₹${(pkg.price * 2).toLocaleString()}</span>
+                                </div>
+                                <div class="price-row" id="childrenPriceRow" style="display: none;">
+                                    <span class="price-label">Children (50% off) × <span id="childrenBreakdown">0</span></span>
+                                    <span class="price-value" id="childrenPrice">₹0</span>
+                                </div>
+                                <div class="price-row" id="nightsMultiplierRow" style="display: none;">
+                                    <span class="price-label">× <span id="nightsBreakdown">1</span> nights</span>
+                                    <span class="price-value"></span>
+                                </div>
+                                <div class="price-row">
+                                    <span class="price-label">Taxes & fees (10%)</span>
+                                    <span class="price-value" id="taxesPrice">₹${Math.round(pkg.price * 2 * 0.1).toLocaleString()}</span>
+                                </div>
+                                <div class="price-total-row price-row">
+                                    <span class="price-label">Grand Total</span>
+                                    <span class="price-value" id="grandTotal">₹${Math.round(pkg.price * 2 * 1.1).toLocaleString()}</span>
+                                </div>
+                            </div>
+
+                            <button id="customizeBookBtn" class="btn btn-primary" style="width: 100%; height: 50px; font-size: 1.1rem; margin-bottom: 1rem;">Customize & Book</button>
+                            <button class="btn btn-outline" style="width: 100%;" onclick="window.history.back()">Back to Packages</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+
+                // Booking System State
+                const bookingState = {
+                    adults: 2,
+                    children: 0,
+                    childrenAges: [],
+                    infants: 0,
+                    checkIn: '',
+                    checkOut: '',
+                    nights: 0,
+                    basePrice: pkg.price
+                };
+
+                // Update Traveler Counts
+                window.updateTravelers = function (type, delta) {
+                    if (type === 'adults') {
+                        const newValue = Math.max(1, Math.min(10, bookingState.adults + delta));
+                        bookingState.adults = newValue;
+                        document.getElementById('adults-count').textContent = newValue;
+                    } else if (type === 'children') {
+                        const newValue = Math.max(0, Math.min(6, bookingState.children + delta));
+                        bookingState.children = newValue;
+                        document.getElementById('children-count').textContent = newValue;
+
+                        // Update ages array
+                        if (newValue > bookingState.childrenAges.length) {
+                            for (let i = bookingState.childrenAges.length; i < newValue; i++) {
+                                bookingState.childrenAges.push(10);
+                            }
+                        } else {
+                            bookingState.childrenAges = bookingState.childrenAges.slice(0, newValue);
+                        }
+                        renderChildrenAges();
+                    } else if (type === 'infants') {
+                        const newValue = Math.max(0, Math.min(4, bookingState.infants + delta));
+                        bookingState.infants = newValue;
+                        document.getElementById('infants-count').textContent = newValue;
+                    }
+                    calculateBooking();
+                };
+
+                // Render Age Inputs for Children
+                function renderChildrenAges() {
+                    const container = document.getElementById('childrenAgesContainer');
+                    if (bookingState.children === 0) {
+                        container.style.display = 'none';
+                        return;
+                    }
+                    container.style.display = 'block';
+                    container.innerHTML = bookingState.childrenAges.map((age, i) => `
+                        <div class="age-input-wrapper">
+                            <span class="age-input-label">Child ${i + 1}:</span>
+                            <input type="number" class="age-input" value="${age}" min="2" max="17" 
+                                onchange="updateChildAge(${i}, this.value)">
+                            <span class="age-input-label">years</span>
+                        </div>
+                    `).join('');
+                }
+
+                window.updateChildAge = function (index, value) {
+                    bookingState.childrenAges[index] = parseInt(value) || 10;
+                    calculateBooking();
+                };
+
+                // Calculate Booking Price
+                window.calculateBooking = function () {
+                    const basePrice = bookingState.basePrice;
+                    const adults = bookingState.adults;
+                    const children = bookingState.children;
+
+                    // Calculate dates
+                    const checkIn = document.getElementById('checkInDate').value;
+                    const checkOut = document.getElementById('checkOutDate').value;
+                    bookingState.checkIn = checkIn;
+                    bookingState.checkOut = checkOut;
+
+                    if (checkIn && checkOut) {
+                        const d1 = new Date(checkIn);
+                        const d2 = new Date(checkOut);
+                        const nights = Math.max(0, Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)));
+                        bookingState.nights = nights;
+
+                        if (nights > 0) {
+                            document.getElementById('nightsDisplay').textContent = `${nights} night${nights > 1 ? 's' : ''}`;
+                            document.getElementById('nightsMultiplierRow').style.display = 'flex';
+                            document.getElementById('nightsBreakdown').textContent = nights;
+                        } else {
+                            document.getElementById('nightsDisplay').textContent = 'Invalid dates';
+                            document.getElementById('nightsMultiplierRow').style.display = 'none';
+                            bookingState.nights = 1;
+                        }
+                    } else {
+                        document.getElementById('nightsDisplay').textContent = 'Select dates';
+                        document.getElementById('nightsMultiplierRow').style.display = 'none';
+                        bookingState.nights = 1;
+                    }
+
+                    // Calculate prices
+                    const adultsTotal = basePrice * adults;
+                    const childrenTotal = basePrice * 0.5 * children;
+                    const subtotal = (adultsTotal + childrenTotal) * bookingState.nights;
+                    const taxes = Math.round(subtotal * 0.1);
+                    const grandTotal = subtotal + taxes;
+
+                    // Update UI
+                    document.getElementById('adultsBreakdown').textContent = adults;
+                    document.getElementById('adultsPrice').textContent = '₹' + adultsTotal.toLocaleString();
+
+                    if (children > 0) {
+                        document.getElementById('childrenPriceRow').style.display = 'flex';
+                        document.getElementById('childrenBreakdown').textContent = children;
+                        document.getElementById('childrenPrice').textContent = '₹' + childrenTotal.toLocaleString();
+                    } else {
+                        document.getElementById('childrenPriceRow').style.display = 'none';
+                    }
+
+                    document.getElementById('taxesPrice').textContent = '₹' + taxes.toLocaleString();
+                    document.getElementById('grandTotal').textContent = '₹' + grandTotal.toLocaleString();
+
+                    return grandTotal;
+                };
+
+                // Set minimum dates to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('checkInDate').min = today;
+                document.getElementById('checkOutDate').min = today;
+
+                // Auto-update checkout when checkin changes
+                document.getElementById('checkInDate').addEventListener('change', function () {
+                    const checkIn = new Date(this.value);
+                    checkIn.setDate(checkIn.getDate() + 1);
+                    document.getElementById('checkOutDate').min = checkIn.toISOString().split('T')[0];
+                });
+
+                // Customize & Book Button Handler
+                document.getElementById('customizeBookBtn').addEventListener('click', () => {
+                    const user = auth.getUser();
+                    if (!user) {
+                        alert("Please login to book a package");
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    // Validate dates
+                    if (!bookingState.checkIn || !bookingState.checkOut) {
+                        alert('Please select check-in and check-out dates');
+                        return;
+                    }
+
+                    if (bookingState.nights <= 0) {
+                        alert('Check-out date must be after check-in date');
+                        return;
+                    }
+
+                    // Open customization modal
+                    document.getElementById('customizationModal').classList.add('active');
+                });
+
+                // Weather
+                fetchWeather(pkg.location);
+            }
+
+            // Customization State
+            const customizationState = {
+                accommodation: { value: 'standard', price: 0 },
+                mealPlan: { value: 'breakfast', price: 0 },
+                transport: { value: 'standard', price: 0 },
+                addOns: {}
+            };
+
+            // Select Option (for radio-style options)
+            window.selectOption = function (element, type, value, price) {
+                // Remove selected from all cards of this type
+                document.querySelectorAll(`[data-type="${type}"]`).forEach(card => {
+                    card.classList.remove('selected');
+                });
+                // Add selected to clicked card
+                element.classList.add('selected');
+                // Update state
+                customizationState[type] = { value, price };
+                updateModalTotal();
+            };
+
+            // Toggle Add-on
+            window.toggleAddon = function (name, price, checked) {
+                if (checked) {
+                    customizationState.addOns[name] = price;
+                } else {
+                    delete customizationState.addOns[name];
+                }
+                updateModalTotal();
+            };
+
+            // Update Modal Total
+            function updateModalTotal() {
+                const baseTotal = calculateBooking();
+                const customizationTotal =
+                    customizationState.accommodation.price +
+                    customizationState.mealPlan.price +
+                    customizationState.transport.price +
+                    Object.values(customizationState.addOns).reduce((sum, price) => sum + price, 0);
+
+                const finalTotal = baseTotal + customizationTotal;
+                document.getElementById('modalGrandTotal').textContent = `(₹${finalTotal.toLocaleString()})`;
+                return finalTotal;
+            }
+
+            // Close Modal
+            window.closeCustomizationModal = function () {
+                document.getElementById('customizationModal').classList.remove('active');
+            };
+
+            // Proceed to Payment
+            window.proceedToPayment = function () {
+                const finalTotal = updateModalTotal();
+                const specialRequests = document.getElementById('specialRequests').value;
+
+                // Build booking summary
+                const travelers = `${bookingState.adults} Adult${bookingState.adults > 1 ? 's' : ''}` +
+                    (bookingState.children > 0 ? `, ${bookingState.children} Child${bookingState.children > 1 ? 'ren' : ''}` : '') +
+                    (bookingState.infants > 0 ? `, ${bookingState.infants} Infant${bookingState.infants > 1 ? 's' : ''}` : '');
+
+                const customizations = [
+                    customizationState.accommodation.value !== 'standard' ? `${customizationState.accommodation.value} accommodation` : null,
+                    customizationState.mealPlan.value !== 'breakfast' ? `${customizationState.mealPlan.value} meals` : null,
+                    customizationState.transport.value !== 'standard' ? `Premium ${customizationState.transport.value}` : null,
+                    ...Object.keys(customizationState.addOns)
+                ].filter(Boolean).join(', ');
+
+                // Close customization modal
+                closeCustomizationModal();
+
+                // Open payment modal
+                PaymentManager.open({
+                    title: `${pkg.name}`,
+                    subtitle: `${travelers} • ${bookingState.nights} night${bookingState.nights > 1 ? 's' : ''}`,
+                    price: '₹' + finalTotal.toLocaleString(),
+                    type: 'Package',
+                    image: pkg.image,
+                    date: `${bookingState.checkIn} to ${bookingState.checkOut}`,
+                    bookingData: {
+                        packageId: pkg.id,
+                        packageName: pkg.name,
+                        travelers: {
+                            adults: bookingState.adults,
+                            children: bookingState.children,
+                            childrenAges: bookingState.childrenAges,
+                            infants: bookingState.infants
+                        },
+                        dates: {
+                            checkIn: bookingState.checkIn,
+                            checkOut: bookingState.checkOut,
+                            nights: bookingState.nights
+                        },
+                        customization: customizationState,
+                        specialRequests: specialRequests,
+                        totalPrice: finalTotal
+                    }
+                });
+            };
+
+            // Weather Function
+            async function fetchWeather(locationName) {
+                const coords = {
+                    'Kerala': { lat: 10.8505, lon: 76.2711 },
+                    'Rajasthan': { lat: 26.9124, lon: 75.7873 },
+                    'Goa': { lat: 15.2993, lon: 74.1240 },
+                    'Himachal': { lat: 31.1048, lon: 77.1734 },
+                    'Manali': { lat: 32.2432, lon: 77.1892 },
+                    'Agra': { lat: 27.1767, lon: 78.0081 },
+                    'Andaman': { lat: 11.6234, lon: 92.7265 }
+                };
+                const locKey = Object.keys(coords).find(k => locationName.includes(k));
+                if (!locKey) return;
+                const { lat, lon } = coords[locKey];
+
+                try {
+                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                    const data = await res.json();
+                    const temp = data.current_weather.temperature;
+                    const weatherHTML = `
+            <div class="weather-badge fade-in-up" style="position: absolute; bottom: 3rem; right: 3rem; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 1rem 1.5rem; border-radius: 16px; color: white; display: flex; align-items: center; gap: 1rem; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                <i class="fa-solid fa-cloud-sun text-3xl"></i>
+                <div><div class="text-2xl font-bold">${temp}°C</div><div class="text-xs">Live Weather</div></div>
+            </div>`;
+                    document.querySelector('.details-hero .container').insertAdjacentHTML('beforeend', weatherHTML);
+                } catch (e) {
+                    console.error("Weather error", e);
+                }
+            }
+
+            // Drawer Logic
+            auth.requireAuth();
+            const user = auth.getUser();
+            if (user) {
+                document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById('drawerName').textContent = user.name;
+                document.getElementById('drawerEmail').textContent = user.email;
+                if (user.avatar && !user.avatar.includes('ui-avatars')) {
+                    document.getElementById('userAvatarImg').src = user.avatar;
+                    document.getElementById('userAvatarImg').style.display = 'block';
+                    document.getElementById('userInitial').style.display = 'none';
+                }
+            }
+            window.toggleUserDrawer = function () {
+                document.getElementById('profileDrawer').classList.toggle('active');
+                document.getElementById('drawerOverlay').classList.toggle('active');
+                document.getElementById('userMenuContainer').classList.toggle('active');
+            }
+            window.handleLogout = function () { auth.logout(); }
+
+            // --- ANIMATION TRIGGER (Fix blank screen) ---
+            setTimeout(() => {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) entry.target.classList.add('visible');
+                    });
+                }, { threshold: 0.1 });
+                document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

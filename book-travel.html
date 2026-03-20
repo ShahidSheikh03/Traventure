@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Travel - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar" id="navbar" style="background: #020617; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="container flex-between">
+            <div class="flex-center" style="gap: 2rem;">
+                <a href="home.html" class="logo" style="font-size: 1.5rem; font-weight: 800; color: white;">
+                    Tra<span class="text-accent">venture</span>
+                </a>
+                <div class="nav-links">
+                    <a href="home.html" class="nav-link">Home</a>
+                    <a href="packages.html" class="nav-link">Packages</a>
+                    <a href="book-travel.html" class="nav-link" style="color:white; opacity:1;">Book Travel</a>
+                    <a href="incity-travel.html" class="nav-link">In-City Travel</a>
+                    <a href="home.html#offers" class="nav-link">Offers</a>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <div class="lang-selector">
+                    <i class="fa-solid fa-globe"></i> <span>EN</span>
+                </div>
+                <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.15);"></div>
+                <div class="user-menu" id="userMenuContainer">
+                    <div class="avatar-trigger" onclick="toggleUserDrawer()">
+                        <div class="avatar-container">
+                            <span id="userInitial">U</span>
+                            <img id="userAvatarImg" src="" class="avatar-img" style="display:none;">
+                        </div>
+                        <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+                    </div>
+                </div>
+            </div>
+
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="section-padding" style="padding-top: 4rem;">
+        <div class="container text-center fade-in-up">
+            <h1 class="text-3xl font-bold" style="margin-bottom: 1rem;">Intercity Travel</h1>
+            <p class="text-muted" style="margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Seamlessly book Flights, Trains, and Buses for your next journey.
+            </p>
+
+            <div class="booking-widget" style="margin: 0 auto; max-width: 800px;">
+                <!-- Widget Tabs -->
+                <div class="widget-tabs">
+                    <div class="tab-btn active" onclick="switchTab('flights')">
+                        <i class="fa-solid fa-plane"></i> Flights
+                    </div>
+                    <div class="tab-btn" onclick="switchTab('trains')">
+                        <i class="fa-solid fa-train"></i> Trains
+                    </div>
+                    <div class="tab-btn" onclick="switchTab('buses')">
+                        <i class="fa-solid fa-bus"></i> Buses
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <form id="bookingForm" onsubmit="handleSearch(event)" style="padding: 2rem;">
+                    <!-- Generic Input Fields -->
+                    <div class="tab-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group">
+                            <label class="input-label">From</label>
+                            <input type="text" class="input-field" placeholder="Origin City">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">To</label>
+                            <input type="text" class="input-field" placeholder="Destination City">
+                        </div>
+                    </div>
+                    <div class="tab-grid" style="grid-template-columns: 1fr 1fr; margin-top: 1rem; gap: 1rem;">
+                        <div class="input-group">
+                            <label class="input-label">Date</label>
+                            <input type="date" class="input-field">
+                        </div>
+                        <div class="input-group" style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary" style="height: 48px; width: 100%;">Search <span
+                                    id="genericSearchType">Flights</span></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Options Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="grid-cols-3">
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem;">
+                    <i class="fa-solid fa-bus text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Bus Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Sleeper, Semi-sleeper, AC, and Volvo buses
+                        from top operators.</p>
+                </div>
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem; transition-delay: 0.1s;">
+                    <i class="fa-solid fa-train text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Train Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Authorized IRCTC partner. Check PNR status and
+                        seat availability.</p>
+                </div>
+                <div class="glass-panel text-center fade-in-up" style="padding: 2rem; transition-delay: 0.2s;">
+                    <i class="fa-solid fa-plane text-4xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold text-xl">Flight Booking</h3>
+                    <p class="text-muted text-sm" style="margin: 1rem 0;">Domestic and International flights with zero
+                        convenience fee offers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #020617; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div class="text-center text-sm text-muted">
+                © 2026 Traventure. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Copying Drawer Code from Home for Consistency -->
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleUserDrawer()"></div>
+    <div class="profile-drawer" id="profileDrawer">
+        <!-- Header -->
+        <div class="drawer-header">
+            <div class="drawer-user-info">
+                <span class="drawer-name" id="drawerName">User Name</span>
+                <span class="drawer-email" id="drawerEmail">email@example.com</span>
+            </div>
+            <button class="close-btn" onclick="toggleUserDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Actions -->
+        <div class="drawer-content">
+            <a href="profile.html" class="drawer-item"><i class="fa-regular fa-user"></i> My Profile</a>
+            <a href="#" class="drawer-item"><i class="fa-solid fa-suitcase-rolling"></i> My Bookings</a>
+            <div class="drawer-item item-logout" onclick="handleLogout()" style="margin-top:2rem; cursor:pointer;">
+                <i class="fa-solid fa-power-off"></i> Logout
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth-lib.js"></script>
+    <script>
+        // import { auth } from './js/auth.js';
+
+        // Auth & Drawer Logic
+        auth.requireAuth();
+        const user = auth.getUser();
+        if (user) {
+            document.getElementById('userInitial').textContent = user.name.charAt(0).toUpperCase();
+            document.getElementById('drawerName').textContent = user.name;
+            document.getElementById('drawerEmail').textContent = user.email || (user.name.toLowerCase().replace(' ', '') + '@traventure.com');
+            if (user.avatar && !user.avatar.includes('ui-avatars')) {
+                document.getElementById('userAvatarImg').src = user.avatar;
+                document.getElementById('userAvatarImg').style.display = 'block';
+                document.getElementById('userInitial').style.display = 'none';
+            }
+        }
+        window.toggleUserDrawer = function () {
+            document.getElementById('profileDrawer').classList.toggle('active');
+            document.getElementById('drawerOverlay').classList.toggle('active');
+            document.getElementById('userMenuContainer').classList.toggle('active');
+        }
+        window.handleLogout = function () { auth.logout(); }
+
+        // Tab Logic
+        window.switchTab = function (tabName) {
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            // Activate button
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(tabName)) btn.classList.add('active');
+            });
+            document.getElementById('genericSearchType').textContent = tabName.charAt(0).toUpperCase() + tabName.slice(1);
+        }
+
+        window.handleSearch = function (e) {
+            e.preventDefault();
+            alert('Search functionality for ' + document.getElementById('genericSearchType').textContent + ' is coming soon!');
+        }
+
+        // Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

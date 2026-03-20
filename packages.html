@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Packages - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Shared Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script src="js/translations.js"></script>
+    <script src="js/navbar.js"></script>
+
+    <!-- 2. Hero Section -->
+
+    <!-- 2. Hero Section -->
+    <!-- 2. Hero Section -->
+    <section class="packages-hero" style="position: relative; padding: 6rem 0; overflow: hidden;">
+        <div style="position: absolute; inset: 0; z-index: -1;">
+            <div
+                style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.4));">
+            </div>
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop"
+                style="width: 100%; height: 100%; object-fit: cover; filter: blur(4px);">
+        </div>
+        <div class="packages-hero-content fade-in-up container text-center" style="position: relative; z-index: 1;">
+            <h1 class="text-4xl font-bold" style="margin-bottom: 1rem; color: #0f172a;" data-i18n="pkg.title">Explore
+                Travel Packages</h1>
+            <p class="text-lg" style="color: #475569;" data-i18n="hero.subtitle">Handpicked experiences for every kind
+                of traveler.</p>
+        </div>
+    </section>
+
+    <!-- 3. Sticky Filter Bar -->
+    <div class="filter-bar">
+        <div class="container">
+            <div class="flex-between">
+                <div class="filter-container">
+                    <div class="filter-pill">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <select>
+                            <option>Any Destination</option>
+                            <option>Kerala</option>
+                            <option>Rajasthan</option>
+                            <option>Goa</option>
+                            <option>Himachal</option>
+                        </select>
+                    </div>
+                    <div class="filter-pill">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                        <select>
+                            <option>Any Budget</option>
+                            <option>Under 10k</option>
+                            <option>10k - 25k</option>
+                            <option>25k - 50k</option>
+                            <option>Luxury (50k+)</option>
+                        </select>
+                    </div>
+                    <div class="filter-pill">
+                        <i class="fa-regular fa-clock"></i>
+                        <select>
+                            <option>Any Duration</option>
+                            <option>Weekend (2-3 days)</option>
+                            <option>Short Trip (4-6 days)</option>
+                            <option>Long Trip (7+ days)</option>
+                        </select>
+                    </div>
+                    <div class="filter-pill">
+                        <i class="fa-solid fa-umbrella-beach"></i>
+                        <select>
+                            <option>Travel Type</option>
+                            <option>Honeymoon</option>
+                            <option>Family</option>
+                            <option>Adventure</option>
+                            <option>Solo</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Reset & Sort -->
+                <div class="filter-pill" onclick="resetFilters()">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Packages Listing -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="grid-cols-3" id="allPackagesContainer">
+                <!-- Packages injected via JS -->
+            </div>
+
+            <button class="load-more-btn">Load More Packages</button>
+        </div>
+    </section>
+
+    <!-- 5. Trust & Value -->
+    <section class="section-padding"
+        style="background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div class="grid-cols-4">
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div class="font-bold">24/7 Support</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-check-to-slot"></i></div>
+                    <div class="font-bold">Verified Packages</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                    <div class="font-bold">Flexible Cancellation</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon"><i class="fa-solid fa-tag"></i></div>
+                    <div class="font-bold">Best Price Guarantee</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CTA Banner -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="cta-banner fade-in-up">
+                <h2 class="text-3xl font-bold" style="margin-bottom: 1rem;">Not sure where to go?</h2>
+                <p class="text-muted text-lg" style="margin-bottom: 2rem;">Let our travel experts help you plan the
+                    perfect trip tailored to your preferences.</p>
+                <button class="btn btn-primary" style="padding: 1rem 2rem;">
+                    <i class="fa-solid fa-phone"></i> Talk to a Travel Expert
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Consistent) -->
+
+    <script>
+        // --- INLINED DEPENDENCIES ---
+
+
+
+        // PACKAGES DATA
+        const packages = [
+            {
+                id: 'rajasthan-royal',
+                name: 'Royal Jaipur & Udaipur',
+                location: 'Rajasthan',
+                duration: '5D / 4N',
+                price: 18999,
+                image: 'https://images.unsplash.com/photo-1595928607628-7711d9a6331a?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Best Seller',
+                tagColor: '',
+                highlights: ['4-Star Heritage Stay', 'Private AC Cab Transfers', 'Palace Tours & Guide'],
+                description: 'Experience the grandeur of the Pink City and the City of Lakes. Stay in heritage hotels and enjoy private guided tours of the magnificent palaces and forts.'
+            },
+            {
+                id: 'goa-beach',
+                name: 'Sunny Goa Vibes',
+                location: 'Goa',
+                duration: '4D / 3N',
+                price: 12499,
+                image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Trending',
+                tagColor: '#10b981',
+                highlights: ['Beach Resort Stay with Breakfast', 'North to South Sightseeing', 'Cruise Dinner Included'],
+                description: 'Relax on the sun-kissed beaches of Goa. This package covers both North and South Goa, including water sports activities and a sunset cruise.'
+            },
+            {
+                id: 'kerala-backwaters',
+                name: 'Munnar & Alleppey',
+                location: 'Kerala',
+                duration: '6D / 5N',
+                price: 22500,
+                image: 'https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=2000&auto=format&fit=crop',
+                tag: '',
+                tagColor: '',
+                highlights: ['Houseboat Stay (All Meals)', 'Tea Garden Visit', 'Cochin Airport Pickup'],
+                description: 'Immerse yourself in God\'s Own Country. Float through the backwaters of Alleppey in a traditional houseboat and breathe in the fresh air of Munnar tea gardens.'
+            },
+            {
+                id: 'manali-adventure',
+                name: 'Manali Adventure',
+                location: 'Himachal',
+                duration: '7D / 6N',
+                price: 15999,
+                image: 'https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000&auto=format&fit=crop',
+                tag: '',
+                tagColor: '',
+                highlights: ['Solang Valley Paragliding', 'Rohtang Pass Tour', 'Bonfire & Music Night'],
+                description: 'Calling all adventure lovers! Paraglide over Solang Valley, play in the snow at Rohtang Pass, and enjoy cozy bonfire nights in Manali.'
+            },
+            {
+                id: 'agra-taj',
+                name: 'Taj Mahal Express',
+                location: 'Agra',
+                duration: '2D / 1N',
+                price: 4999,
+                image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1000&auto=format&fit=crop',
+                tag: '',
+                tagColor: '',
+                highlights: ['Taj Mahal Sunrise Tour', 'Agra Fort Visit', 'Luxury AC Bus from Delhi'],
+                description: 'A quick getaway to witness the monument of love. Perfect for a weekend trip from Delhi, including comfortable travel and guided tours.'
+            },
+            {
+                id: 'andaman-bliss',
+                name: 'Andaman Island Bliss',
+                location: 'Andaman',
+                duration: '6D / 5N',
+                price: 32500,
+                image: 'https://images.unsplash.com/photo-1518182170-4380816043cd?q=80&w=1000&auto=format&fit=crop',
+                tag: 'Honeymoon',
+                tagColor: '#a855f7',
+                highlights: ['Havelock Island Ferry', 'Scuba Diving Session', 'Candlelight Dinner'],
+                description: 'The ultimate romantic getaway. Pristine white sands, crystal clear waters, and luxury stays make this the perfect honeymoon package.'
+            }
+        ];
+
+        // --- MAIN LOGIC ---
+
+        // Render All Packages
+        const packagesContainer = document.getElementById('allPackagesContainer');
+        if (packagesContainer) {
+            packagesContainer.innerHTML = packages.map((pkg, index) => `
+                <div class="package-card fade-in-up" style="transition-delay: ${index * 0.05}s;">
+                    <div class="card-img-wrap">
+                        <img src="${pkg.image}" class="card-img">
+                        ${pkg.tag ? `<span class="tag-badge" style="${pkg.tagColor ? 'background:' + pkg.tagColor : ''}">${pkg.tag}</span>` : ''}
+                        <div class="wishlist-btn"><i class="fa-regular fa-heart"></i></div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> ${pkg.location}</span>
+                            <span><i class="fa-regular fa-clock"></i> ${pkg.duration}</span>
+                        </div>
+                        <h3 class="card-title">${pkg.name}</h3>
+                        <ul class="card-highlights">
+                            ${pkg.highlights.map(h => `<li>${h}</li>`).join('')}
+                        </ul>
+                        <div class="card-footer">
+                            <div>
+                                <div class="price-tag" data-i18n="pkg.price">Starting from</div>
+                                <div class="price-value">₹${pkg.price.toLocaleString()}</div>
+                            </div>
+                            <a href="package-details.html?id=${pkg.id}" class="btn btn-outline" style="padding: 0.5rem 1rem;" data-i18n="pkg.view">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+
+        // Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

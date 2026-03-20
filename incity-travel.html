@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-City Travel - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
+    <style>
+        .ride-type-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .ride-type-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 150px;
+        }
+
+        .ride-type-card.selected {
+            background: var(--color-primary);
+            border-color: var(--color-accent);
+        }
+
+        .ride-type-icon {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+        }
+
+        /* Map Container */
+        #map-container {
+            height: 600px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            /* Behind floating panels if any */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <nav class="navbar" id="navbar">
+        <div class="container flex-between">
+            <div class="flex-center" style="gap: 2rem;">
+                <a href="home.html" class="logo" style="font-size: 1.5rem; font-weight: 800; color: white;">
+                    Tra<span class="text-accent">venture</span>
+                </a>
+                <div class="nav-links">
+                    <a href="home.html" class="nav-link">Home</a>
+                    <a href="packages.html" class="nav-link">Packages</a>
+                    <a href="transport.html" class="nav-link">Transport</a>
+                    <a href="incity-travel.html" class="nav-link" style="color:white; opacity:1;">In-City Travel</a>
+                    <a href="home.html#offers" class="nav-link">Offers</a>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <div class="lang-selector">
+                    <i class="fa-solid fa-globe"></i> <span>EN</span>
+                </div>
+                <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.15);"></div>
+                <div class="user-menu" id="userMenuContainer">
+                    <div class="avatar-trigger" onclick="toggleUserDrawer()">
+                        <div class="avatar-container">
+                            <span id="userInitial">U</span>
+                            <img id="userAvatarImg" src="" class="avatar-img" style="display:none;">
+                        </div>
+                        <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+                    </div>
+                </div>
+            </div>
+
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="section-padding" style="padding-top: 6rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; inset: 0; z-index: -1;">
+            <div
+                style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.4));">
+            </div>
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop"
+                style="width: 100%; height: 100%; object-fit: cover; filter: blur(4px);">
+        </div>
+        <div class="container grid-cols-2" style="align-items: flex-start; gap: 3rem; position: relative; z-index: 1;">
+
+            <!-- Booking Widget (Left) -->
+            <div class="fade-in-up">
+                <span class="badge"
+                    style="background: var(--color-accent); color: white; margin-bottom: 1rem; padding: 4px 8px; border-radius:4px; font-weight:bold; font-size:0.8rem;">City
+                    Mobility</span>
+                <h1 class="text-4xl font-bold" style="margin-bottom: 1rem;">Move Around the City</h1>
+                <p class="text-muted text-lg" style="margin-bottom: 2rem;">
+                    Instant Cabs and Bike rides. View real-time routes and fares.
+                </p>
+
+                <!-- Widget -->
+                <div class="glass-panel" style="padding: 2rem;">
+                    <!-- Ride Type Selection -->
+                    <div class="ride-type-selector">
+                        <div class="ride-type-card selected" onclick="selectRideType(this, 'cab')">
+                            <div class="ride-type-icon"><i class="fa-solid fa-car"></i></div>
+                            <div>
+                                <div class="font-bold text-sm">Cab</div>
+                                <div class="text-xs text-muted">Comfy & Safe</div>
+                            </div>
+                        </div>
+                        <div class="ride-type-card" onclick="selectRideType(this, 'bike')">
+                            <div class="ride-type-icon"><i class="fa-solid fa-motorcycle"></i></div>
+                            <div>
+                                <div class="font-bold text-sm">Bike</div>
+                                <div class="text-xs text-muted">Fast & Cheap</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; gap: 1rem;">
+                        <input type="text" id="inputPickup" class="input-field" placeholder="My Current Location (Auto)"
+                            readonly style="cursor: pointer; background: rgba(255,255,255,0.1);">
+                        <input type="text" id="inputDrop" class="input-field"
+                            placeholder="Enter Destination (e.g. Connaught Place)">
+
+                        <div class="input-group" style="text-align: center; margin: 1rem 0;" id="fareDisplay">
+                            <label class="input-label">Estimated Fare (Enter Drop Location)</label>
+                            <div class="text-accent font-bold text-2xl" id="fareValue">--</div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="searchRoute()" style="width: 100%; height: 50px;">Find
+                            Ride</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map (Right) -->
+            <div id="map-container" class="fade-in-up">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-padding" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="grid-cols-3">
+                <div class="glass-panel fade-in-up" style="padding: 1.5rem;">
+                    <i class="fa-solid fa-shield-halved text-2xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold">Safe Rides</h3>
+                    <p class="text-muted text-sm">Verified drivers and real-time tracking for your safety.</p>
+                </div>
+                <div class="glass-panel fade-in-up" style="padding: 1.5rem; transition-delay: 0.1s;">
+                    <i class="fa-solid fa-wallet text-2xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold">Affordable</h3>
+                    <p class="text-muted text-sm">Transparent pricing with no hidden surges.</p>
+                </div>
+                <div class="glass-panel fade-in-up" style="padding: 1.5rem; transition-delay: 0.2s;">
+                    <i class="fa-solid fa-bolt text-2xl text-accent" style="margin-bottom: 1rem;"></i>
+                    <h3 class="font-bold">Fast Pickup</h3>
+                    <p class="text-muted text-sm">Get a ride within minutes, anywhere in the city.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #020617; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <div class="text-center text-sm text-muted">
+                © 2026 Traventure. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Leaflet Routing Machine JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- Leaflet Control Geocoder for Address Search -->
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <script>
+        // import { auth } from './js/auth.js'; // Handled by navbar.js
+
+        // Auth Logic handled by navbar.js
+
+        window.selectRideType = function (el, type) {
+            document.querySelectorAll('.ride-type-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // ================= MAP & ROUTING LOGIC =================
+
+        let map;
+        let userMarker;
+        let routingControl;
+        let userLat, userLng;
+
+        // Initialize Map
+        function initMap() {
+            // Default Center: New Delhi
+            map = L.map('map').setView([28.6139, 77.2090], 12);
+
+            // Tiles (Dark Mode-ish using CartoDB Dark Matter if available, or just OSM)
+            // Using OSM Standard for reliability, but styling can be changed.
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Get User Location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+
+                    // Center Map & Add Marker
+                    map.setView([userLat, userLng], 14);
+
+                    // Create User Marker (Green Dot or similar)
+                    userMarker = L.marker([userLat, userLng]).addTo(map)
+                        .bindPopup('You are here').openPopup();
+
+                    document.getElementById('inputPickup').value = "My Current Location";
+
+                }, error => {
+                    console.error("Location access denied or error:", error);
+                    alert("Allow location access to find rides near you!");
+                });
+            }
+        }
+
+        // Trigger Routing
+        window.searchRoute = function () {
+            const destinationQuery = document.getElementById('inputDrop').value;
+
+            if (!userLat || !userLng) {
+                alert("Please wait for your location to be detected.");
+                return;
+            }
+            if (!destinationQuery) {
+                alert("Please enter a destination!");
+                return;
+            }
+
+            // Remove existing route if any
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            // Geocode Destination using specialized Nominatim fetch for better control than the plugin widget sometimes
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(destinationQuery)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const destLat = data[0].lat;
+                        const destLng = data[0].lon;
+
+                        // Create Route
+                        routingControl = L.Routing.control({
+                            waypoints: [
+                                L.latLng(userLat, userLng),
+                                L.latLng(destLat, destLng)
+                            ],
+                            routeWhileDragging: false,
+                            addWaypoints: false,
+                            draggableWaypoints: false,
+                            fitSelectedRoutes: true,
+                            showAlternatives: true,
+                            lineOptions: {
+                                styles: [{ color: '#3b82f6', opacity: 0.8, weight: 6 }]
+                            }
+                        })
+                            .on('routesfound', function (e) {
+                                var routes = e.routes;
+                                var summary = routes[0].summary;
+                                // Calculate simple fare: ₹15 base + ₹12/km
+                                const distanceKm = summary.totalDistance / 1000;
+                                const estimatedFare = Math.round(50 + (distanceKm * 15));
+
+                                document.getElementById('fareValue').textContent = `₹${estimatedFare} - ₹${estimatedFare + 40}`;
+                                document.querySelector('.input-label').textContent = `Distance: ${Math.round(distanceKm)} km • ${Math.round(summary.totalTime / 60)} mins`;
+                            })
+                            .addTo(map);
+
+                    } else {
+                        alert("Destination not found. Try a specific landmark.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Error searching location.");
+                });
+        }
+
+        // Initialize on load
+        initMap();
+
+        // Animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>

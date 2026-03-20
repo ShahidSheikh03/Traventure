@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Chat Layout */
+        .planner-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            height: calc(100vh - 80px);
+            /* Subtract Navbar */
+            overflow: hidden;
+        }
+
+        @media (min-width: 900px) {
+            .planner-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        /* Sidebar (Chat) */
+        .chat-sidebar {
+            background: #0f172a;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            height: 100%;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-right: 0.5rem;
+            /* Space for scrollbar */
+        }
+
+        /* Scrolbar for history */
+        .chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .chat-msg {
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            max-width: 90%;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .chat-msg.user {
+            background: var(--color-primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-msg.ai {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-area {
+            position: relative;
+            flex-shrink: 0;
+            /* Prevent squashing */
+            background: #0f172a;
+            /* Cover bottom */
+        }
+
+        .chat-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 3rem 1rem 1rem;
+            /* Right padding for button */
+            border-radius: 12px;
+            color: white;
+            resize: none;
+            height: 80px;
+            /* Increased height */
+            outline: none;
+            font-family: inherit;
+            overflow-y: auto;
+            /* Allow scroll only if really needed */
+            box-sizing: border-box;
+            /* Ensure padding doesn't break width */
+        }
+
+        .chat-input::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-input::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-input:focus {
+            border-color: var(--color-accent);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            /* Adjusted alignment */
+            background: var(--color-accent);
+            /* Make it visible/clickable looking */
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            background: #e65a00;
+            /* Darker orange */
+        }
+
+        /* Main Content (Itinerary) */
+        .itinerary-view {
+            background: #020617;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .itinerary-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .day-timeline {
+            border-left: 2px solid var(--color-accent);
+            padding-left: 2rem;
+            margin-left: 1rem;
+            margin-top: 2rem;
+        }
+
+        .activity-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -2.6rem;
+            top: 0.2rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--color-accent);
+            border-radius: 50%;
+            border: 4px solid #020617;
+        }
+
+        /* Loading Animation */
+        .typing-dots span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        @keyframes typing {
+
+            0%,
+            100% {
+                transform: scale(0.2);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .typing-dots span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Shared Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar.js"></script>
+
+    <div class="planner-layout">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <h2 class="text-xl font-bold mb-4" style="display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-robot text-accent"></i> Travel Agent
+            </h2>
+
+            <div class="chat-history" id="chatHistory">
+                <!-- Welcome Message -->
+                <div class="chat-msg ai">
+                    Hello! I'm your AI Travel Planner. Tell me where you want to go, your budget, and how many days you
+                    have! 🌍✈️
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea id="chatInput" class="chat-input"
+                    placeholder="E.g., Plan a 3-day trip to Goa for a couple..."></textarea>
+                <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <!-- Main View -->
+        <div class="itinerary-view" id="itineraryView">
+            <div class="empty-state">
+                <i class="fa-solid fa-map-location-dot" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                <h2 class="text-2xl font-bold mb-2">Your Itinerary will appear here</h2>
+                <p>Start chatting to generate a custom plan.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // import { auth } from './js/auth.js'; // Removed module dependency
+
+        // Auto-fill from Home Page Search
+        const urlParams = new URLSearchParams(window.location.search);
+        const prompt = urlParams.get('prompt');
+        if (prompt) {
+            document.getElementById('chatInput').value = prompt;
+            // Optional: Auto-send? stick to manual for now so user can refine
+        }
+
+        // Logic
+        window.sendMessage = async function () {
+            const input = document.getElementById('chatInput');
+            const history = document.getElementById('chatHistory');
+            const text = input.value.trim();
+            const view = document.getElementById('itineraryView');
+
+            if (!text) return;
+
+            // 1. Add User Message
+            history.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            input.value = '';
+            history.scrollTop = history.scrollHeight;
+
+            // 2. Show "Thinking" state
+            const loadingId = 'loading-' + Date.now();
+            history.innerHTML += `
+                <div class="chat-msg ai" id="${loadingId}">
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
+                </div>
+            `;
+
+            try {
+                // 3. Call Backend
+                // NOTE: Using localhost:5000 as configured in server.js
+                const response = await fetch('http://localhost:5000/api/plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+
+                const data = await response.json();
+
+                // 4. Remove Loading
+                document.getElementById(loadingId).remove();
+
+                // 5. Add AI Reply
+                history.innerHTML += `<div class="chat-msg ai">I've created a plan for you! Check the main view.</div>`;
+
+                // 6. Render Itinerary
+                renderItinerary(data);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById(loadingId).innerHTML = "Sorry, I couldn't reach the server. Make sure the backend is running!";
+                document.getElementById(loadingId).style.color = "#ef4444";
+            }
+        }
+
+        function renderItinerary(plan) {
+            const view = document.getElementById('itineraryView');
+
+            // Generate HTML for Days
+            const daysHtml = plan.itinerary.map(day => `
+                <div class="day-timeline">
+                    <h3 class="text-xl font-bold text-white mb-4">Day ${day.day}: ${day.title}</h3>
+                    ${day.activities.map(act => `
+                        <div class="activity-item">
+                            <div class="text-accent text-sm font-bold mb-1">${act.time}</div>
+                            <div class="text-gray-300">${act.text}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            view.innerHTML = `
+                <div class="itinerary-card">
+                <div class="itinerary-card">
+                    <div class="flex-between mb-6" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <h1 class="text-3xl font-bold text-gradient" style="line-height: 1.2;">${plan.title.replace('Simulated:', '<span class="badge" style="background:var(--color-primary);font-size:0.6em;vertical-align:middle;margin-right:0.5rem;">SIMULATED</span>')}</h1>
+                            <p class="text-muted mt-2">${plan.summary}</p>
+                        </div>
+                        <div class="text-right" style="flex-shrink: 0;">
+                            <div class="text-sm text-muted">Est. Price</div>
+                            <div class="text-2xl font-bold text-green-400">${plan.total_price}</div>
+                        </div>
+                    </div>
+
+                    ${daysHtml}
+
+                    <div style="margin-top: 3rem; text-align: center;">
+                        <button class="btn btn-primary" onclick="alert('Proceeding to Booking...')" style="padding: 1rem 3rem; font-size: 1.1rem;">
+                            Book This Trip <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                        <button class="btn btn-outline" onclick="savePlan()" style="margin-left: 1rem;">
+                            <i class="fa-regular fa-bookmark"></i> Save logic
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Save Plan Logic
+        let currentPlan = null; // Store current plan globally needed for saving
+
+        // Override renderItinerary to capture plan
+        const originalRenderItinerary = renderItinerary;
+        renderItinerary = function (plan) {
+            currentPlan = plan; // Capture for saving
+            originalRenderItinerary(plan);
+        }
+
+        window.savePlan = function () {
+            if (!currentPlan) {
+                alert('No plan to save! Generate one first.');
+                return;
+            }
+
+            const savedPlans = JSON.parse(localStorage.getItem('traventure_ai_plans') || '[]');
+
+            // Add metadata
+            currentPlan.createdOn = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            savedPlans.push(currentPlan);
+            localStorage.setItem('traventure_ai_plans', JSON.stringify(savedPlans));
+
+            // Show Toast (Simple alert for now, can be enhanced)
+            // Creating a custom toast element would be better but alert is functional for MVP
+            const btn = document.querySelector('.btn-outline[onclick="savePlan()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+            btn.style.color = '#22c55e';
+            btn.style.borderColor = '#22c55e';
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }, 2000);
+        };
+
+        // Enter key to send
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+
+</html>

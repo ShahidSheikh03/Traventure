@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), var(--bg-body));
+            z-index: -1;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .logo span {
+            color: var(--color-accent);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+    <div class="auth-container">
+        <div class="glass-panel auth-card fade-in">
+            <a href="#" class="logo">Tra<span>venture</span></a>
+            <h2 style="margin-bottom: 0.5rem;">Create Account</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Join us for premium travel experiences</p>
+
+            <form id="signupForm">
+                <div class="input-group">
+                    <input type="text" id="name" class="input-field" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" class="input-field" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" class="input-field" placeholder="Password (min 6 chars)"
+                        minlength="6" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Sign Up <i class="fa-solid fa-user-plus" style="margin-left: 5px;"></i>
+                </button>
+            </form>
+
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                Already have an account? <a href="login.html" style="color: var(--color-accent); font-weight: 600;">Sign
+                    In</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/auth-lib.js"></script>
+    <script>
+        auth.redirectIfLoggedIn();
+
+        const signupForm = document.getElementById('signupForm');
+        const loginBtn = signupForm.querySelector('button[type="submit"]');
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating...';
+            loginBtn.disabled = true;
+
+            try {
+                await auth.signup(name, email, password);
+                window.location.href = 'home.html';
+            } catch (err) {
+                alert('Signup failed');
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

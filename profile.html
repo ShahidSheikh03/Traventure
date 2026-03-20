@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Traventure</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Profile Specific Styles */
+        .profile-header {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .p-tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .p-tab-btn.active {
+            color: white;
+        }
+
+        .p-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--color-accent);
+        }
+
+        /* Booking Card */
+        .booking-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .booking-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .bc-header {
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bc-body {
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .bc-img {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-confirmed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* AI Plan Card */
+        .plan-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Forms & Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media(min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Wallet Section */
+        .wallet-card {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .payment-method:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            transform: scale(0.95);
+            transition: 0.3s;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Shared Navbar -->
+    <div id="navbar-placeholder"></div>
+    <script src="js/translations.js"></script>
+    <script src="js/navbar.js"></script>
+
+    <div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+
+        <!-- Profile Header -->
+        <div class="profile-header fade-in-up">
+            <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=f97316&color=fff"
+                style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1);">
+            <div style="flex: 1;">
+                <h1 class="text-3xl font-bold text-white mb-1" id="userName">User Name</h1>
+                <p class="text-muted" id="userEmail">user@example.com</p>
+                <div style="display: flex; gap: 2rem; margin-top: 1rem;">
+                    <div>
+                        <span class="text-xl font-bold text-white" id="bookingCount">0</span>
+                        <span class="text-sm text-muted">Bookings</span>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-white" id="planCount">0</span>
+                        <span class="text-sm text-muted">Planned Trips</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+
+                <button class="btn btn-outline" onclick="logoutFromProfile()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="fade-in-up" style="animation-delay: 0.1s;">
+            <div class="profile-tabs">
+                <button class="p-tab-btn active" onclick="showTab('bookings')" id="tab-btn-bookings"
+                    data-i18n="prof.tab.bookings">
+                    <i class="fa-solid fa-suitcase"></i> My Bookings
+                </button>
+                <button class="p-tab-btn" onclick="showTab('plans')" id="tab-btn-plans" data-i18n="prof.tab.plans">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Plans
+                </button>
+                <button class="p-tab-btn" onclick="showTab('personal')" id="tab-btn-personal"
+                    data-i18n="prof.tab.personal">
+                    <i class="fa-regular fa-address-card"></i> Personal Info
+                </button>
+                <button class="p-tab-btn" onclick="showTab('wallet')" id="tab-btn-wallet" data-i18n="prof.tab.wallet">
+                    <i class="fa-solid fa-wallet"></i> Wallet & Cards
+                </button>
+            </div>
+
+            <!-- BOOKINGS SECTION -->
+            <div id="view-bookings">
+                <!-- Filters -->
+                <div class="flex-between mb-4">
+                    <h3 class="text-xl font-bold">Trip History</h3>
+                    <select class="input-field" style="width: auto; padding: 0.5rem 1rem;">
+                        <option>All Bookings</option>
+                        <option>Upcoming</option>
+                        <option>Completed</option>
+                        <option>Cancelled</option>
+                    </select>
+                </div>
+
+                <div id="bookings-container">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- AI PLANS SECTION -->
+            <div id="view-plans" style="display: none;">
+                <div class="flex-between mb-4">
+                    <h3 class="text-xl font-bold">Saved Itineraries</h3>
+                    <a href="planner.html" class="btn btn-primary btn-sm" style="font-size: 0.9rem;">
+                        <i class="fa-solid fa-plus"></i> Create New Plan
+                    </a>
+                </div>
+
+                <div id="plans-container" class="grid-cols-2">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- PERSONAL INFO SECTION -->
+            <div id="view-personal" style="display: none;">
+                <h3 class="text-xl font-bold mb-4">Personal Details</h3>
+                <form id="personalForm" onsubmit="savePersonalDetails(event)" style="max-width: 800px;">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label class="input-label">Full Name</label>
+                            <input type="text" id="pName" class="input-field">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Email Address</label>
+                            <input type="email" id="pEmail" class="input-field" readonly
+                                style="opacity: 0.7; cursor: not-allowed;">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Phone Number</label>
+                            <input type="tel" id="pPhone" class="input-field" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Date of Birth</label>
+                            <input type="date" id="pDob" class="input-field">
+                        </div>
+                    </div>
+
+                    <div class="input-group mt-4">
+                        <label class="input-label">Address</label>
+                        <textarea id="pAddress" class="input-field" rows="3"
+                            placeholder="Street, City, Zip Code"></textarea>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-primary" data-i18n="prof.save">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- WALLET SECTION -->
+            <div id="view-wallet" style="display: none;">
+                <div class="wallet-card">
+                    <div>
+                        <div class="text-muted text-sm mb-1" data-i18n="prof.wallet.bal">Traventure Balance</div>
+                        <div class="text-4xl font-bold text-white">₹ <span id="walletBalance">0</span></div>
+                    </div>
+                    <button class="btn btn-outline" style="background: rgba(255,255,255,0.1); border:none; color:white;"
+                        onclick="openAddMoneyModal()">
+                        <i class="fa-solid fa-plus"></i> <span data-i18n="prof.wallet.add">Add Money</span>
+                    </button>
+                </div>
+
+                <div class="grid-cols-2">
+                    <!-- Saved Cards -->
+                    <div>
+                        <div class="flex-between mb-3">
+                            <h4 class="font-bold">Cards</h4>
+                            <button class="text-accent text-sm" onclick="openAddMethodModal('card')">+ Add New</button>
+                        </div>
+                        <div id="cards-container">
+                            <!-- Populated JS -->
+                        </div>
+                    </div>
+
+                    <!-- UPI -->
+                    <div>
+                        <div class="flex-between mb-3">
+                            <h4 class="font-bold">UPI IDs</h4>
+                            <button class="text-accent text-sm" onclick="openAddMethodModal('upi')">+ Add New</button>
+                        </div>
+                        <div id="upi-container">
+                            <!-- Populated JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+
+    <!-- Add Payment Method Modal -->
+    <div class="modal-overlay" id="addMethodModal">
+        <div class="modal-card">
+            <h3 class="text-2xl font-bold mb-4 text-white">Add Payment Method</h3>
+            <form onsubmit="savePaymentMethod(event)">
+                <input type="hidden" id="methodType">
+
+                <div id="cardFields" style="display:none;">
+                    <div class="input-group">
+                        <label class="input-label">Card Number</label>
+                        <input type="text" id="cardNumber" class="input-field" placeholder="XXXX XXXX XXXX XXXX"
+                            maxlength="19">
+                    </div>
+                    <div class="flex-between" style="gap:1rem;">
+                        <div class="input-group">
+                            <label class="input-label">Expiry</label>
+                            <input type="text" id="cardExpiry" class="input-field" placeholder="MM/YY">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">CVV</label>
+                            <input type="password" id="cardCvv" class="input-field" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Cardholder Name</label>
+                        <input type="text" id="cardName" class="input-field" placeholder="John Doe">
+                    </div>
+                </div>
+
+                <div id="upiFields" style="display:none;">
+                    <div class="input-group">
+                        <label class="input-label">UPI ID</label>
+                        <input type="text" id="upiVpa" class="input-field" placeholder="username@bank">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Provider Name</label>
+                        <input type="text" id="upiProvider" class="input-field" placeholder="e.g. Google Pay">
+                    </div>
+                </div>
+
+                <div class="flex-between" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeMethodModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save & Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Money Modal -->
+    <div class="modal-overlay" id="addMoneyModal">
+        <div class="modal-card">
+            <h3 class="text-2xl font-bold mb-4 text-white">Add Money to Wallet</h3>
+            <form onsubmit="processAddMoney(event)">
+                <div class="input-group">
+                    <label class="input-label">Amount (₹)</label>
+                    <input type="number" id="moneyAmount" class="input-field" placeholder="1000" min="100" required>
+                </div>
+
+                <h4 class="text-sm font-bold text-muted mb-2 mt-4">Select Payment Method</h4>
+                <div id="moneyPaymentMethods" style="max-height: 200px; overflow-y: auto; margin-bottom: 2rem;">
+                    <!-- Injected JS -->
+                </div>
+
+                <div class="flex-between">
+                    <button type="button" class="btn btn-outline" onclick="closeAddMoneyModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Proceed to Pay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- AUTH CHECK ---
+        const user = JSON.parse(localStorage.getItem('traventure_user'));
+        if (!user) window.location.href = 'login.html';
+
+        // Set User Info
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userEmail').textContent = user.email;
+        if (user.avatar && !user.avatar.includes('ui-avatars')) {
+            document.getElementById('userAvatar').src = user.avatar;
+        }
+
+        // --- MOCK DATA FOR BOOKINGS (If Empty) ---
+        // Simulating a history to make "My Bookings" look good as requested
+        let bookings = JSON.parse(localStorage.getItem('traventure_bookings') || '[]');
+        if (bookings.length === 0) {
+            bookings = [
+                {
+                    id: 'TRV-8821',
+                    title: 'Taj Mahal Express',
+                    location: 'Agra',
+                    dates: '24 Feb 2024 - 25 Feb 2024',
+                    status: 'Upcoming',
+                    price: '₹9,998',
+                    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=200&auto=format&fit=crop'
+                },
+                {
+                    id: 'TRV-4012',
+                    title: 'Goa Beach Party',
+                    location: 'Goa',
+                    dates: '10 Dec 2023 - 14 Dec 2023',
+                    status: 'Completed',
+                    price: '₹24,999',
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=200&auto=format&fit=crop'
+                }
+            ];
+            // Don't save mock data to persist to ensure it doesn't break real flows later, 
+            // but for display purposes now:
+        }
+
+        // --- LOGIC ---
+
+        document.getElementById('bookingCount').textContent = bookings.length;
+
+        // Render Bookings
+        const bookingsContainer = document.getElementById('bookings-container');
+        if (bookings.length === 0) {
+            bookingsContainer.innerHTML = '<div class="text-center text-muted p-5">No bookings found.</div>';
+        } else {
+            bookingsContainer.innerHTML = bookings.map(b => {
+                let statusClass = 'status-confirmed';
+                if (b.status === 'Completed') statusClass = 'status-completed';
+                if (b.status === 'Cancelled') statusClass = 'status-cancelled';
+
+                return `
+                <div class="booking-card">
+                    <div class="bc-header">
+                        <span class="text-muted text-sm font-bold">ID: ${b.id}</span>
+                        <span class="status-badge ${statusClass}">${b.status}</span>
+                    </div>
+                    <div class="bc-body">
+                        <img src="${b.image}" class="bc-img">
+                        <div style="flex: 1;">
+                            <h4 class="text-xl font-bold mb-1">${b.title}</h4>
+                            <p class="text-muted text-sm mb-2"><i class="fa-solid fa-location-dot"></i> ${b.location}</p>
+                            <p class="text-sm text-accent"><i class="fa-regular fa-calendar-days"></i> ${b.dates}</p>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-xl font-bold mb-2">${b.price}</div>
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Render AI Plans
+        const plans = JSON.parse(localStorage.getItem('traventure_ai_plans') || '[]');
+        document.getElementById('planCount').textContent = plans.length;
+
+        const plansContainer = document.getElementById('plans-container');
+        if (plans.length === 0) {
+            plansContainer.innerHTML = `
+                <div class="text-muted" style="grid-column: span 2; text-align: center; padding: 4rem; background: rgba(255,255,255,0.02); border-radius: 12px;">
+                    <i class="fa-solid fa-wand-magic-sparkles text-3xl mb-3 opacity-50"></i>
+                    <p>No saved AI plans yet.</p>
+                    <a href="planner.html" class="text-accent underline">Create one now</a>
+                </div>`;
+        } else {
+            plansContainer.innerHTML = plans.map((p, index) => `
+                <div class="plan-card">
+                    <div class="flex-between mb-3">
+                        <h4 class="text-lg font-bold text-white text-ellipsis">${p.title}</h4>
+                        <button onclick="deletePlan(${index})" class="text-muted hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                    </div>
+                    <p class="text-sm text-muted mb-4" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        ${p.summary}
+                    </p>
+                    <div class="flex-between" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                        <div class="plan-metric"><i class="fa-regular fa-clock"></i> ${p.createdOn || 'Recently'}</div>
+                        <div class="plan-metric text-green-400 font-bold">${p.total_price}</div>
+                    </div>
+                    <div class="mt-4">
+                         <button class="btn btn-outline" style="width: 100%;" onclick="alert('Viewing functionality to be implemented needs planner integration')">View Full Plan</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- PERSONAL INFO & WALLET DATA ---
+        let paymentMethods = JSON.parse(localStorage.getItem('traventure_methods') || '[]');
+
+        // Initial Seed if empty
+        if (paymentMethods.length === 0) {
+            paymentMethods = [
+                { id: '1', type: 'card', name: 'HDFC Debit', last4: '4582', brand: 'visa' },
+                { id: '2', type: 'upi', provider: 'Google Pay', vpa: 'user@oksbi' }
+            ];
+            localStorage.setItem('traventure_methods', JSON.stringify(paymentMethods));
+        }
+
+        function loadExtendedData() {
+            const user = JSON.parse(localStorage.getItem('traventure_user'));
+            document.getElementById('pName').value = user.name || '';
+            document.getElementById('pEmail').value = user.email || '';
+            document.getElementById('pPhone').value = user.phone || '';
+            document.getElementById('pDob').value = user.dob || '';
+            document.getElementById('pAddress').value = user.address || '';
+
+            loadWallet();
+        }
+
+        function loadWallet() {
+            // Wallet Balance
+            const wallet = JSON.parse(localStorage.getItem('traventure_wallet') || '{"balance": 5000}');
+            document.getElementById('walletBalance').textContent = wallet.balance.toLocaleString('en-IN');
+
+            // Render Methods
+            const cardsContainer = document.getElementById('cards-container');
+            const upiContainer = document.getElementById('upi-container');
+
+            cardsContainer.innerHTML = '';
+            upiContainer.innerHTML = '';
+
+            paymentMethods.forEach((method, index) => {
+                const html = `
+                    <div class="payment-method">
+                        <i class="fa-brands ${method.brand === 'visa' ? 'fa-cc-visa' : 'fa-cc-mastercard'} text-2xl text-white"></i>
+                        <div style="flex:1;">
+                            <div class="font-bold">${method.name}</div>
+                            <div class="text-xs text-muted">${method.type === 'card' ? '**** ' + method.last4 : method.vpa}</div>
+                        </div>
+                        <i class="fa-solid fa-trash text-muted hover:text-red-500 cursor-pointer" onclick="deleteMethod(${index})"></i>
+                    </div>
+                `;
+
+                const upiHtml = `
+                     <div class="payment-method">
+                        <i class="fa-brands fa-google-pay text-2xl text-white"></i>
+                        <div style="flex:1;">
+                            <div class="font-bold">${method.provider}</div>
+                            <div class="text-xs text-muted">${method.vpa}</div>
+                        </div>
+                        <i class="fa-solid fa-trash text-muted hover:text-red-500 cursor-pointer" onclick="deleteMethod(${index})"></i>
+                    </div>
+                `;
+
+                if (method.type === 'card') cardsContainer.innerHTML += html;
+                else upiContainer.innerHTML += upiHtml;
+            });
+        }
+
+        // --- PAYMENT METHOD MANAGEMENT ---
+        const methodModal = document.getElementById('addMethodModal');
+
+        function openAddMethodModal(type) {
+            document.getElementById('methodType').value = type;
+            document.getElementById('cardFields').style.display = type === 'card' ? 'block' : 'none';
+            document.getElementById('upiFields').style.display = type === 'upi' ? 'block' : 'none';
+            methodModal.classList.add('active');
+        }
+
+        function closeMethodModal() { methodModal.classList.remove('active'); }
+
+        function savePaymentMethod(e) {
+            e.preventDefault();
+            const type = document.getElementById('methodType').value;
+
+            if (type === 'card') {
+                const number = document.getElementById('cardNumber').value;
+                const name = document.getElementById('cardName').value;
+                if (number.length < 16) return alert('Invalid Card Number');
+
+                paymentMethods.push({
+                    id: Date.now(),
+                    type: 'card',
+                    name: name || 'New Card',
+                    last4: number.slice(-4),
+                    brand: 'visa' // simplify
+                });
+            } else {
+                const vpa = document.getElementById('upiVpa').value;
+                const provider = document.getElementById('upiProvider').value;
+                if (!vpa.includes('@')) return alert('Invalid UPI ID');
+
+                paymentMethods.push({
+                    id: Date.now(),
+                    type: 'upi',
+                    provider: provider || 'UPI App',
+                    vpa: vpa
+                });
+            }
+
+            localStorage.setItem('traventure_methods', JSON.stringify(paymentMethods));
+            loadWallet();
+            closeMethodModal();
+        }
+
+        function deleteMethod(index) {
+            if (confirm('Remove this payment method?')) {
+                paymentMethods.splice(index, 1);
+                localStorage.setItem('traventure_methods', JSON.stringify(paymentMethods));
+                loadWallet();
+            }
+        }
+
+        // --- ADD MONEY LOGIC ---
+        const moneyModal = document.getElementById('addMoneyModal');
+        function openAddMoneyModal() {
+            // Render selection list
+            const container = document.getElementById('moneyPaymentMethods');
+            container.innerHTML = paymentMethods.map((m, i) => `
+                <div class="payment-method" onclick="selectMoneyMethod(this)">
+                    <input type="radio" name="money_method" value="${i}" style="margin-right:1rem;">
+                    <div>
+                        <div class="font-bold">${m.type === 'card' ? m.name : m.provider}</div>
+                        <div class="text-xs text-muted">${m.type === 'card' ? '**** ' + m.last4 : m.vpa}</div>
+                    </div>
+                </div>
+            `).join('');
+            moneyModal.classList.add('active');
+        }
+        function closeAddMoneyModal() { moneyModal.classList.remove('active'); }
+
+        function selectMoneyMethod(el) {
+            const radio = el.querySelector('input');
+            radio.checked = true;
+            document.querySelectorAll('#moneyPaymentMethods .payment-method').forEach(d => d.style.background = 'rgba(255,255,255,0.02)');
+            el.style.background = 'rgba(255,255,255,0.1)';
+        }
+
+        function processAddMoney(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('moneyAmount').value);
+            const selected = document.querySelector('input[name="money_method"]:checked');
+
+            if (!amount || amount <= 0) return alert('Please enter a valid amount');
+            if (!selected) return alert('Please select a payment method');
+
+            // Process
+            let wallet = JSON.parse(localStorage.getItem('traventure_wallet') || '{"balance": 5000}');
+            wallet.balance += amount;
+            localStorage.setItem('traventure_wallet', JSON.stringify(wallet));
+
+            closeAddMoneyModal();
+            loadWallet();
+            // Show confetti/success (simple alert for now)
+            alert(`Successfully added ₹${amount} to your wallet!`);
+        }
+
+        function savePersonalDetails(e) {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('traventure_user'));
+
+            // Update fields
+            user.name = document.getElementById('pName').value;
+            // Email is read-only usually, but just in case
+            user.phone = document.getElementById('pPhone').value;
+            user.dob = document.getElementById('pDob').value;
+            user.address = document.getElementById('pAddress').value;
+
+            localStorage.setItem('traventure_user', JSON.stringify(user));
+
+            // Refresh Header
+            document.getElementById('userName').textContent = user.name;
+
+            alert('Personal details saved successfully!');
+        }
+
+        // Init Data
+        loadExtendedData();
+
+        // --- FUNCTIONS ---
+
+        function showTab(tabName) {
+            // Hide all
+            document.getElementById('view-bookings').style.display = 'none';
+            document.getElementById('view-plans').style.display = 'none';
+            document.getElementById('view-personal').style.display = 'none';
+            document.getElementById('view-wallet').style.display = 'none';
+
+            // Deactivate buttons
+            document.querySelectorAll('.p-tab-btn').forEach(b => b.classList.remove('active'));
+
+            // Show selected
+            document.getElementById(`view-${tabName}`).style.display = 'block';
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+        }
+
+        function deletePlan(index) {
+            if (confirm('Delete this plan?')) {
+                const plans = JSON.parse(localStorage.getItem('traventure_ai_plans') || '[]');
+                plans.splice(index, 1);
+                localStorage.setItem('traventure_ai_plans', JSON.stringify(plans));
+                location.reload();
+            }
+        }
+
+        function logoutFromProfile() {
+            localStorage.removeItem('traventure_user');
+            window.location.href = 'login.html';
+        }
+
+
+
+        // --- ANIMATION TRIGGER ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
